@@ -33,3 +33,10 @@ def construct_get_album_tracks_req_string(artist_name, album_name):
         album_name = album_name.replace(' ', '+')
     return  (APIVersion + 'method=album.getinfo&api_key=' + APIKey + '&artist=' +
     artist_name + '&album=' + album_name + '&format=json')
+
+def constrict_get_search_vk_audio_string(artist_name, track_name, token):
+    if ' ' in artist_name:
+        artist_name = artist_name.replace(' ', '+')
+    if ' ' in track_name:
+        track_name = track_name.replace(' ', '+')
+    return ('/method/audio.search?q='+artist_name+'+'+track_name+'&count=1&access_token='+ token)

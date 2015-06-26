@@ -8,11 +8,13 @@ from urllib.request import *
 import http.client
 from requestHeaderConstructor import *
 import json
+import time
 
 __author__ = 'aleksandrlazarenko'
 
 # General root for requests
 APIRoot = 'ws.audioscrobbler.com'
+VKApiRoot = 'api.vk.com'
 
 """
 Function finds information about artists
@@ -71,3 +73,20 @@ def get_tracks_from_album(artist_name, album_name):
     parsed_data = json.loads(json_data_about_tracks)                                    # parsing json
     tracks = parsed_data['album']['tracks']['track']                                             # getting list of tracks
     return tracks
+
+
+def get_urls_of_tracks_for_downloading(author, listOfNames, token):
+    listOfUrls = []
+    connection = http.client.HTTPSConnection(VKApiRoot)
+    for track in listOfNames:
+        str = constrict_get_search_vk_audio_string(author, track, token)
+        connection.request('GET', str)
+        response = connection.getresponse()
+        bytetracks = response.read()
+        jsontracks = bytetracks.decode('utf-8')
+        parsed = json.loads(jsontracks)
+        track = parsed
+        listOfUrls.append(track)
+        time.sleep(1)
+    connection.close()
+    return listOfUrls
