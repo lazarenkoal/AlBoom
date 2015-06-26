@@ -35,5 +35,11 @@ for track in tracks:
     print(track['name'])
 
 tracksUrl = get_urls_of_tracks_for_downloading(artistName, tracksForUploading, token)
+links = []
 for track in tracksUrl:
-    print(track['response'][1]['url'])
+    try:
+        links.append(track['response'][1]['url'])
+        print(track['response'][1]['url'])
+    except:
+        continue
+# download it

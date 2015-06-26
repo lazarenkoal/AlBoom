@@ -75,20 +75,23 @@ def get_tracks_from_album(artist_name, album_name):
     return tracks
 
 """
-Gets
+Gets urls of tracks from VK
+API method: audio.search
+API method URL: https://vk.com/dev/audio.search
+input author, listOfNames, token
+outut: list of urls for uploading
 """
 def get_urls_of_tracks_for_downloading(author, listOfNames, token):
-    listOfUrls = []
-    connection = http.client.HTTPSConnection(VKApiRoot)
-    for track in listOfNames:
-        str = constrict_get_search_vk_audio_string(author, track, token)
-        connection.request('GET', str)
-        response = connection.getresponse()
-        bytetracks = response.read()
-        jsontracks = bytetracks.decode('utf-8')
-        parsed = json.loads(jsontracks)
-        track = parsed
-        listOfUrls.append(track)
-        time.sleep(1)
-    connection.close()
-    return listOfUrls
+    listOfUrls = []                                                             # list for urs
+    connection = http.client.HTTPSConnection(VKApiRoot)                         # opening connection
+    for track in listOfNames:                                                   # go foreach song in album
+        str = constrict_get_search_vk_audio_string(author, track, token)        # constructing request for each song
+        connection.request('GET', str)                                          # making request
+        response = connection.getresponse()                                     # getting response
+        bytetracks = response.read()                                            # reading bytes from response
+        jsontracks = bytetracks.decode('utf-8')                                 # decoding
+        parsed = json.loads(jsontracks)                                         # parsing json
+        listOfUrls.append(parsed)                                               # taking link
+        time.sleep(1)                                                           # waiting for a second
+    connection.close()                                                          # closing connection
+    return listOfUrls                                                           # returning links
