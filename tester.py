@@ -1,7 +1,5 @@
 from musicInfoProcessing import *
-import urllib
-from socialAuthentication import *
-import webbrowser
+from uploder import *
 """
 url = ('https://oauth.vk.com/authorize?' +
        'client_id=4973489&' +
@@ -13,6 +11,7 @@ url = ('https://oauth.vk.com/authorize?' +
 
 webbrowser.open_new(url)
 """
+
 token = '850f1fc36b0f0778223079c2554315fd30e35654194102b2169064485c8d2495013d3422652fa503c1afd'
 print('Введите информацию об имени артиста')
 artistName = input()
@@ -42,4 +41,8 @@ for track in tracksUrl:
         print(track['response'][1]['url'])
     except:
         continue
-# download it
+print('Загрузка ссылок завершена')
+songWithLinks = dict(zip(tracksForUploading, links))
+print(songWithLinks)
+upload_songs(artistName, albumName, songWithLinks)
+
