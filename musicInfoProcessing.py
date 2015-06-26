@@ -71,10 +71,12 @@ def get_tracks_from_album(artist_name, album_name):
     json_data_about_tracks = byte_data_about_tracks.decode('utf-8')                     # getting string from bytes
     connection.close()                                                                  # closing connection
     parsed_data = json.loads(json_data_about_tracks)                                    # parsing json
-    tracks = parsed_data['album']['tracks']['track']                                             # getting list of tracks
+    tracks = parsed_data['album']['tracks']['track']                                    # getting list of tracks
     return tracks
 
-
+"""
+Gets
+"""
 def get_urls_of_tracks_for_downloading(author, listOfNames, token):
     listOfUrls = []
     connection = http.client.HTTPSConnection(VKApiRoot)
