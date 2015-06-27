@@ -34,7 +34,10 @@ def find_artists(artist_name):
     connection.close()                                                  # closing connection
     parsed_data = json.loads(json_data_about_artist)                    # parsing json
     artists = parsed_data['results']['artistmatches']['artist']         # getting list of artists
-    return artists                                                      # sending to caller
+    artists_names = []
+    for artist in artists:
+        artists_names.append(artist['name'])
+    return artists_names                                                     # sending to caller
 
 
 """
@@ -55,7 +58,10 @@ def find_albums(artist_name):
     connection.close()                                                  # closing connection
     parsed_data = json.loads(json_data_about_albums)                    # parsing json
     albums = parsed_data['topalbums']['album']                          # getting list of albums
-    return albums                                                       # sending to caller
+    album_names = []
+    for album in albums:
+        album_names.append(album['name'])
+    return album_names                                                      # sending to caller
 
 """
 Function finds all tracks in album
@@ -75,7 +81,13 @@ def get_tracks_from_album(artist_name, album_name):
     connection.close()                                                                  # closing connection
     parsed_data = json.loads(json_data_about_tracks)                                    # parsing json
     tracks = parsed_data['album']['tracks']['track']                                    # getting list of tracks
-    return tracks
+    tracks_names = []
+    for track in tracks:
+        track_to_append = track['name']
+        if '/' in track_to_append:
+            track_to_append = track_to_append.replace('/', '')
+        tracks_names.append(track_to_append)
+    return tracks_names
 
 """
 Gets urls of tracks from VK
@@ -99,3 +111,4 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token):
         time.sleep(1)                                                                     # waiting for a second
     connection.close()                                                                    # closing connection
     return list_of_urls                                                                   # returning links
+

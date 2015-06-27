@@ -17,21 +17,17 @@ print('Введите информацию об имени артиста')
 artistName = input()
 artists = find_artists(artistName)
 for singer in artists:
-    print(singer['name'])
+    print(singer)
 
 print('Получаю альбомы')
 albums = find_albums(artistName)
 print(albums)
-for album in albums:
-    print(album['name'])
 
 tracksForUploading = []
 print('Введите название альбома, треки из которого вы хотите получить')
 albumName = input()
 tracks = get_tracks_from_album(artistName, albumName)
-for track in tracks:
-    tracksForUploading.append(track['name'])
-    print(track['name'])
+print(tracks)
 
 tracksUrl = get_urls_of_tracks_for_downloading(artistName, tracksForUploading, token)
 links = []
