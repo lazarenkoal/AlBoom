@@ -6,7 +6,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from musicInfoProcessing import *
 from uploder import *
-
+import threading
 token = '850f1fc36b0f0778223079c2554315fd30e35654194102b2169064485c8d2495013d3422652fa503c1afd'
 
 root = tk.Tk()
@@ -77,11 +77,6 @@ enterCodeField.grid(row=0, column=4)
 enterCodeBtn = tk.Button(upperMenuItemsFrame, text='Enter')
 enterCodeBtn.grid(row=0, column=5)
 
-# place for progress bar
-progressLabel = tk.Label(upperMenuItemsFrame, text='Here will be current progress')
-progressLabel.grid(row=0, column=6)
-
-
 """
 Left sub menu part
 """
@@ -90,6 +85,9 @@ Left sub menu part
 leftSubMenuFrame = tk.Frame(root, width=500, height=40, bg='yellow')
 leftSubMenuFrame.grid(row=1, column=0)
 
+# place for progress status
+progressStatusLabel = tk.Label(leftSubMenuFrame, text='Waiting for your commands')
+progressStatusLabel.grid(row=0, column=0)
 
 """
 Left frame part
@@ -124,6 +122,7 @@ def select_album(event):
     try:
         chosen_album = artistsListBox.get(artistsListBox.curselection())
         album = chosen_album
+        display_status('collecting songs')
         songs = get_tracks_from_album(artist, chosen_album)
         songsListBox.delete(0, 'end')
         i = 0
@@ -131,6 +130,7 @@ def select_album(event):
             songs_cache.append(song)
             songsListBox.insert(i, song)
             i += 1
+        display_status('all songs collected')
     except KeyError:
         artistsListBox.bind('<Double-1>', select_artist)
         songsListBox.delete(0, 'end')
@@ -144,12 +144,18 @@ artistsListBox.yview()
 artistsListBox.bind('<Double-1>', select_artist)
 
 """
-Right submenu part
+Right sub menu part
 """
-def download_album(event):
+def download_album():
+    # opening fucking dialog
+    file_path = filedialog.askdirectory()
     if artist != '' and album != '' and songs_cache.__len__() > 0:
-        songs_with_links = make_dict_for_downloading(artist, songs_cache, token)
-        upload_songs(artist, album, songs_with_links)
+        songs_with_links = make_dict_for_downloading(artist, songs_cache, token, display_status)
+        upload_songs(artist, album, songs_with_links, file_path, display_status)
+
+def start_downloading_in_second_thread(event):
+    second_thread = threading.Thread(target=download_album)
+    second_thread.start()
 
 # right little menu frame
 rightSubMenuFrame = tk.Frame(root, width=500, height=40, bg='green')
@@ -157,7 +163,7 @@ rightSubMenuFrame.grid(row=1, column=1)
 
 downloadAlbumBtn = tk.Button(rightSubMenuFrame, text='upload album')
 downloadAlbumBtn.grid(row=0, column=0)
-downloadAlbumBtn.bind('<1>', download_album)
+downloadAlbumBtn.bind('<1>', start_downloading_in_second_thread)
 
 """
 Right menu part
@@ -182,5 +188,7 @@ songsListBox.yview()
 # text3 = tk.Label(songsFrame, text='Song1')
 # text3.grid(row=0, column=1)
 
+def display_status(status_string):
+    progressStatusLabel['text'] = status_string
 
 root.mainloop()
