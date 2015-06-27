@@ -1,6 +1,6 @@
 from musicInfoProcessing import *
 from uploder import *
-"""
+import webbrowser
 url = ('https://oauth.vk.com/authorize?' +
        'client_id=4973489&' +
        'scope=audio&' +
@@ -10,7 +10,7 @@ url = ('https://oauth.vk.com/authorize?' +
        'response_type=token')
 
 webbrowser.open_new(url)
-"""
+
 
 token = '850f1fc36b0f0778223079c2554315fd30e35654194102b2169064485c8d2495013d3422652fa503c1afd'
 print('Введите информацию об имени артиста')
