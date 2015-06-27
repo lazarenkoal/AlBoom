@@ -2,6 +2,7 @@ from io import BytesIO
 import urllib
 import urllib.request
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from musicInfoProcessing import *
@@ -89,6 +90,9 @@ leftSubMenuFrame.grid(row=1, column=0)
 progressStatusLabel = tk.Label(leftSubMenuFrame, text='Waiting for your commands')
 progressStatusLabel.grid(row=0, column=0)
 
+progressBar = ttk.Progressbar(leftSubMenuFrame, orient="horizontal", length=300, mode="determinate")
+progressBar.grid(row=0, column=1)
+progressBar['maximum'] = 100
 """
 Left frame part
 """
@@ -188,7 +192,8 @@ songsListBox.yview()
 # text3 = tk.Label(songsFrame, text='Song1')
 # text3.grid(row=0, column=1)
 
-def display_status(status_string):
+def display_status(status_string, progress_value=0):
     progressStatusLabel['text'] = status_string
+    progressBar['value'] = progress_value
 
 root.mainloop()

@@ -96,11 +96,16 @@ API method URL: https://vk.com/dev/audio.search
 input author, listOfNames, token
 output: list of urls for uploading
 """
-def get_urls_of_tracks_for_downloading(author, list_of_names, token):
+def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
     # TODO: refactor it
     list_of_urls = []                                                                     # list for urs
     connection = http.client.HTTPSConnection(VKApiRoot)                                   # opening connection
+    progress = 0
+    max_progress = list_of_names.__len__()
+    tick = int((1 / max_progress) * 100)
     for track in list_of_names:                                                           # go foreach song in album
+        handler('getting links', progress)
+        progress += tick
         request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
         connection.request('GET', request_string)                                         # making request
         response = connection.getresponse()                                               # getting response
