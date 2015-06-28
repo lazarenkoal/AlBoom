@@ -3,9 +3,10 @@ Current module serves as music uploader
 :)
 """
 from os import makedirs
+from os import path
+from os import open
 import urllib
 from tkinter import messagebox
-from musicInfoProcessing import get_urls_of_tracks_for_downloading
 """
 Uploads song to the directory, which is made for album
 input: artists name, album, dictionary with links ({song-name : link})

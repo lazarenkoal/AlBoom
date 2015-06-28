@@ -6,7 +6,7 @@ from uploder import *
 import threading
 from tkinter import filedialog
 import io
-token = 'bad61610bea3b8d9dbfc20d3aae2a759cc823a17c9353bad7485ed1c463ceb5e4ca273f884f2822371677'
+token = '58fca0ab24a05f6ec8579518e9585ea09679a02849fd66300e10bc581b8bea3fb08e645e97c860bab137e'
 
 root = tk.Tk()
 root.geometry('1100x700')
@@ -77,11 +77,13 @@ searchLabel.grid(row=0, column=0, sticky='w')
 # search field
 searchEnter = tk.Entry(upperMenuItemsFrame, width=25)
 searchEnter.grid(row=0, column=1, sticky='W')
+searchEnter.bind('<Return>', start_searching_in_another_thread)
 
 # search button
 searchBtn = tk.Button(upperMenuItemsFrame, text='Search')
 searchBtn.grid(row=0, column=2)
 searchBtn.bind('<Button-1>', start_searching_in_another_thread)
+
 
 """
 Left sub menu part

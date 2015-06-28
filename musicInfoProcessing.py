@@ -10,6 +10,7 @@ from requestHeaderConstructor import *
 import json
 import time
 import re
+from tkinter import messagebox
 
 __author__ = 'aleksandrlazarenko'
 
@@ -115,30 +116,33 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
     progress = 0
     max_progress = list_of_names.__len__()
     tick = int((1 / max_progress) * 100)
-
-    for track in list_of_names:                                                           # go foreach song in album
-        handler('getting links', progress)
-        progress += tick
-        request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
-        connection.request('GET', request_string)                                         # making request
-        response = connection.getresponse()                                               # getting response
-        byte_tracks = response.read()                                                     # reading bytes from response
-        json_tracks = byte_tracks.decode('utf-8')                                         # decoding
-        parsed_tracks = json.loads(json_tracks)                                           # parsing json
-
-        # handling empty search result (reason = son_name (fucking best version mafckc)
-        if parsed_tracks['response'] == [0]:
-            track = re.sub(r'\([^)]*\)', '', track).strip()
+    try:
+        for track in list_of_names:                                                           # go foreach song in album
+            handler('getting links', progress)
+            progress += tick
             request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
             connection.request('GET', request_string)                                         # making request
             response = connection.getresponse()                                               # getting response
             byte_tracks = response.read()                                                     # reading bytes from response
             json_tracks = byte_tracks.decode('utf-8')                                         # decoding
-            parsed_tracks = json.loads(json_tracks)
+            parsed_tracks = json.loads(json_tracks)                                           # parsing json
 
-        if parsed_tracks['response'] != [0]:
-            upload_dict[track] = parsed_tracks['response'][1]['url']
-        time.sleep(1)                                                                     # waiting for a second
+            print(parsed_tracks)
+            # handling empty search result (reason = son_name (fucking best version mafckc)
+            if parsed_tracks['response'] == [0]:
+                track = re.sub(r'\([^)]*\)', '', track).strip()
+                request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
+                connection.request('GET', request_string)                                         # making request
+                response = connection.getresponse()                                               # getting response
+                byte_tracks = response.read()                                                     # reading bytes from response
+                json_tracks = byte_tracks.decode('utf-8')                                         # decoding
+                parsed_tracks = json.loads(json_tracks)
+
+            if parsed_tracks['response'] != [0]:
+                upload_dict[track] = parsed_tracks['response'][1]['url']
+            time.sleep(1)
+    except KeyError:
+        messagebox.showerror('Need new token', 'Sorry, but your token expired')
     connection.close()                                                                    # closing connection
     return upload_dict                                                                  # returning links
 
