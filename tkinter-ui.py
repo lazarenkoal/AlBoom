@@ -1,15 +1,11 @@
-from io import BytesIO
-import urllib
-import urllib.request
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
 from PIL import Image, ImageTk
 from musicInfoProcessing import *
 from uploder import *
 import threading
 from tkinter import filedialog
-
+import io
 token = 'bad61610bea3b8d9dbfc20d3aae2a759cc823a17c9353bad7485ed1c463ceb5e4ca273f884f2822371677'
 
 root = tk.Tk()
@@ -18,12 +14,16 @@ root.title('Music Scooper')
 root.resizable(False, False)
 connection = None
 
-def get_image(url="http://userserve-ak.last.fm/serve/174s/88057565.png"):
-    with urllib.request.urlopen(url) as u:
-        raw_data = u.read()
-    im = Image.open(BytesIO(raw_data))
-    image_c = ImageTk.PhotoImage(im)
-    return image_c
+# TODO: placeholder!!!!
+def get_image(url="http://userserve-ak.last.fm/serve/174s/97263801.jpg"):
+    image_bytes = urlopen(url).read()
+    # internal data file
+    data_stream = io.BytesIO(image_bytes)
+    # open as a PIL image object
+    pil_image = Image.open(data_stream)
+    tk_image = ImageTk.PhotoImage(pil_image)
+
+    return tk_image
 
 
 # the highest, first frame for search and progress bar
@@ -104,6 +104,9 @@ Left frame part
 # main left frame
 leftFrame = tk.Frame(root, bd=5)
 leftFrame.grid(row=2, column=0)
+leftFrame.grid_rowconfigure(0, weight=1)
+leftFrame.grid_columnconfigure(0, weight=1)
+leftFrame.grid_rowconfigure(1, weight=1)
 
 """
 Current function serves as double left mouse btn click handler
@@ -117,12 +120,11 @@ def select_artist():
     chosen_artist = artistsListBox.get(artistsListBox.curselection())
     artist = chosen_artist
     albums = find_albums(chosen_artist, connection)
-    artistsListBox.delete(0, 'end')
+    albumsListBox.delete(0, 'end')
     i = 0
     for album in albums:
-        artistsListBox.insert(i, album)
+        albumsListBox.insert(i, album)
         i += 1
-    artistsListBox.bind('<Double-1>', start_getting_album_in_another_thread)
 
 def select_artist_in_the_second_thread(event):
     second_thread = threading.Thread(target=select_artist, daemon=True)
@@ -136,40 +138,54 @@ def select_album():
     global album
     global songs_cache
     songs_cache = []
+    chosen_album = albumsListBox.get(albumsListBox.curselection())
+    album = chosen_album
+    display_status('collecting songs')
+    songs, image_url, info = get_tracks_from_album(artist, chosen_album, connection, display_status)
+    print(image_url)
+    print(info)
     try:
-        chosen_album = artistsListBox.get(artistsListBox.curselection())
-        album = chosen_album
-        display_status('collecting songs')
-        songs, image_url, info = get_tracks_from_album(artist, chosen_album, connection, display_status)
-        print(image_url)
-        print(info)
         cover = get_image(image_url)
-        albumPhoto.configure(image=cover)
-        albumPhoto.image = cover
-        albumInfo.configure(state='normal')
-        albumInfo.delete(1.0, 'end')
-        albumInfo.insert(1.0, info)
-        albumInfo.configure(state='disabled')
-        songsListBox.delete(0, 'end')
-        i = 0
-        for song in songs:
-            songs_cache.append(song)
-            songsListBox.insert(i, song)
-            i += 1
-        display_status('all songs collected', 100)
-    except KeyError:
-        artistsListBox.bind('<Double-1>', select_artist_in_the_second_thread)
-        songsListBox.delete(0, 'end')
+    except:
+        cover = None # TODO: find image for album placeholder
+    albumPhoto.configure(image=cover)
+    albumPhoto.image = cover
+    albumInfo.configure(state='normal')
+    albumInfo.delete(1.0, 'end')
+    albumInfo.insert(1.0, info)
+    albumInfo.configure(state='disabled')
+    songsList.configure(state='normal')
+    songsList.delete(1.0, 'end')
+    songsList.insert(1.0, 'Contents: {} - {}\n\n'.format(artist, album))
+    i = 1
+    for song in songs:
+        songs_cache.append(song)
+        songsList.insert('end', '{}) {}\n'.format(i, song))
+        i += 1
+    songsList.configure(state='disabled')
+    display_status('all songs collected', 100)
+
 
 def start_getting_album_in_another_thread(event):
     second_thread = threading.Thread(target=select_album, daemon=True)
     second_thread.start()
 
 # listBox for displaying artists
-artistsListBox = tk.Listbox(leftFrame, selectmode='SINGLE', height=42, width=66)
-artistsListBox.grid(row=0, sticky='NE')
+artistLbl = tk.Label(leftFrame, text='Search results')
+artistLbl.grid(row=0)
+
+artistsListBox = tk.Listbox(leftFrame, selectmode='SINGLE', height=17, width=66)
+artistsListBox.grid(row=1, sticky='n')
 artistsListBox.yview()
 artistsListBox.bind('<Double-1>', select_artist_in_the_second_thread)
+
+albumLbl = tk.Label(leftFrame, text='Albums')
+albumLbl.grid(row=2, sticky='N')
+
+albumsListBox = tk.Listbox(leftFrame, selectmode='SINGLE', height=17, width=66)
+albumsListBox.grid(row=3, sticky='N')
+albumsListBox.yview()
+albumsListBox.bind('<Double-1>', start_getting_album_in_another_thread)
 
 """
 Right sub menu part
@@ -180,7 +196,7 @@ def download_album():
     # opening fucking dialog
     if artist != '' and album != '' and songs_cache.__len__() > 0:
         file_path = filedialog.askdirectory()
-        songs_with_links = make_dict_for_downloading(artist, songs_cache, token, display_status)
+        songs_with_links = get_urls_of_tracks_for_downloading(artist, songs_cache, token, display_status)
         print(songs_cache)
         upload_songs(artist, album, songs_with_links, file_path, display_status)
     else:
@@ -212,9 +228,10 @@ rightFrame.grid(row=2, column=1)
 rightFrame.grid_rowconfigure(0, weight=1)
 
 # information about album
-image = get_image()
+image = Image.open("logo.jpg")
+photo = ImageTk.PhotoImage(image)
 albumPhoto = tk.Label(rightFrame)
-albumPhoto['image'] = image
+albumPhoto['image'] = photo
 albumPhoto.grid(row=0, column=0, sticky='W')
 albumInfo = tk.Text(rightFrame, font=('times', 14), width=42, height=10, wrap='word')
 albumInfo.grid(row=0, column=1, sticky='N')
@@ -227,9 +244,13 @@ albumInfo.insert(1.0, 'Welcome to Music Scooper! Absolutely free tool'
 albumInfo.configure(state='disabled')
 
 # listBox for displaying songs of artists
-songsListBox = tk.Listbox(rightFrame, selectmode='SINGLE', height=32, width=66)
-songsListBox.grid(row=1, sticky='E', columnspan=2)
-songsListBox.yview()
+songsList = tk.Text(rightFrame, font=('times', 16), width=42, height=24, wrap='word')
+songsList.grid(row=1, sticky='W', columnspan=2)
+songsList.insert(1.0, 'Instruction\n'
+                 '1) Find desired musician\n'
+                      '2) Pick album\n'
+                      '3) Download it!!!')
+songsList.configure(state='disabled')
 
 def display_status(status_string, progress_value=0):
     progressStatusLabel['text'] = status_string

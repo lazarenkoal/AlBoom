@@ -9,6 +9,7 @@ import http.client
 from requestHeaderConstructor import *
 import json
 import time
+import re
 
 __author__ = 'aleksandrlazarenko'
 
@@ -79,12 +80,19 @@ def get_tracks_from_album(artist_name, album_name, connection, status_handler):
     parsed_data = json.loads(json_data_about_tracks)                                    # parsing json
     tracks = parsed_data['album']['tracks']['track']                                    # getting list of tracks
     img_url = parsed_data['album']['image'][2]['#text']
-    info = parsed_data['album']['wiki']['summary']
+    try:
+        info = parsed_data['album']['wiki']['summary']
+    except:
+        info = 'No any information...'
     tracks_names = []
     progress = 0
     tick = int((1 / tracks.__len__()) * 100)
     for track in tracks:
-        track_to_append = track['name']
+        try:
+            track_to_append = track['name']
+        except TypeError: # in case of bullshit (1 song in alb)
+            track_to_append = 'Unable to find info about this song'
+            break
         if '/' in track_to_append:
             track_to_append = track_to_append.replace('/', '')
         tracks_names.append(track_to_append)
@@ -101,11 +109,13 @@ output: list of urls for uploading
 """
 def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
     # TODO: refactor it
-    list_of_urls = []                                                                     # list for urs
+    # TODO: should return dictionary here {song_name : link_for_uploading)
+    upload_dict = {}                                                         # list for urs
     connection = http.client.HTTPSConnection(VKApiRoot)                                   # opening connection
     progress = 0
     max_progress = list_of_names.__len__()
     tick = int((1 / max_progress) * 100)
+
     for track in list_of_names:                                                           # go foreach song in album
         handler('getting links', progress)
         progress += tick
@@ -115,8 +125,20 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
         byte_tracks = response.read()                                                     # reading bytes from response
         json_tracks = byte_tracks.decode('utf-8')                                         # decoding
         parsed_tracks = json.loads(json_tracks)                                           # parsing json
-        list_of_urls.append(parsed_tracks)                                                # taking link
+
+        # handling empty search result (reason = son_name (fucking best version mafckc)
+        if parsed_tracks['response'] == [0]:
+            track = re.sub(r'\([^)]*\)', '', track).strip()
+            request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
+            connection.request('GET', request_string)                                         # making request
+            response = connection.getresponse()                                               # getting response
+            byte_tracks = response.read()                                                     # reading bytes from response
+            json_tracks = byte_tracks.decode('utf-8')                                         # decoding
+            parsed_tracks = json.loads(json_tracks)
+
+        if parsed_tracks['response'] != [0]:
+            upload_dict[track] = parsed_tracks['response'][1]['url']
         time.sleep(1)                                                                     # waiting for a second
     connection.close()                                                                    # closing connection
-    return list_of_urls                                                                   # returning links
+    return upload_dict                                                                  # returning links
 

@@ -30,34 +30,10 @@ def upload_songs(artist, album, song_links, file_path, status_handler):
         song_name = folder_directory + '/' + song + '.mp3'
 
         # uploading
+
         urllib.request.urlretrieve(song_links[song], song_name)
         status_handler('Song uploaded', progress)
         progress += tick
     status_handler('Uploading completed', 100)
 
-"""
-Prepares dict with songs names and links
-input: name of the artist, list of tracks for uploading, token, function for displaying status
-output: dictionary for upload songs method
-"""
-def make_dict_for_downloading(artist_name, tracks, token, status_handler):
-    status_handler('Beginning to collect links', 0)
-    tracks_urls = get_urls_of_tracks_for_downloading(artist_name, tracks, token, status_handler)
-    status_handler('Links collected. Beginning to prepare information for downloading', 0)
-    links = []
-    tick = int((1 / len(tracks_urls)) * 100)
-    progress = 0
-    # TODO: Check token!!! Could be expired (Look VK API for error format)
-    for track in tracks_urls:
-        try:
-            progress += tick
-            status_handler('parsing respond', progress)
-            print(track)
-            links.append(track['response'][1]['url'])
-        except KeyError:
-            messagebox.showerror(title='Need new Token for VK', message='Please, make a new token for vk')
-
-    songs_with_links = dict(zip(tracks, links))
-    status_handler('Preparation finished. Ready for downloading', 100)
-    return songs_with_links
 
