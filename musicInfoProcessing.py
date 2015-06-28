@@ -2,7 +2,7 @@
 Current module contains functions for working with information
 related to artist. Searching, getting albums.
 Functions are using audioscrobbler API.
-Last update: 28.06.2015
+Last update: 27.06.2015
 """
 from urllib.request import *
 import http.client
