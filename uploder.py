@@ -4,6 +4,7 @@ Current module serves as music uploader
 """
 from os import makedirs
 import urllib
+from tkinter import messagebox
 from musicInfoProcessing import get_urls_of_tracks_for_downloading
 """
 Uploads song to the directory, which is made for album
@@ -48,10 +49,13 @@ def make_dict_for_downloading(artist_name, tracks, token, status_handler):
     progress = 0
     # TODO: Check token!!! Could be expired (Look VK API for error format)
     for track in tracks_urls:
-        progress += tick
-        status_handler('parsing respond', progress)
-        print(track)
-        links.append(track['response'][1]['url'])
+        try:
+            progress += tick
+            status_handler('parsing respond', progress)
+            print(track)
+            links.append(track['response'][1]['url'])
+        except KeyError:
+            messagebox.showerror(title='Need new Token for VK', message='Please, make a new token for vk')
 
     songs_with_links = dict(zip(tracks, links))
     status_handler('Preparation finished. Ready for downloading', 100)
