@@ -118,6 +118,7 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
     max_progress = list_of_names.__len__()
     tick = int((1 / max_progress) * 100)
     try:
+        num = 0
         for track in list_of_names:                                                           # go foreach song in album
             handler('getting links', progress)
             progress += tick
@@ -140,7 +141,8 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
                 parsed_tracks = json.loads(json_tracks)
 
             if parsed_tracks['response'] != [0]:
-                upload_dict[track] = parsed_tracks['response'][1]['url']
+                num += 1
+                upload_dict[track] = [num, parsed_tracks['response'][1]['url']]
             time.sleep(1)
     except KeyError:
         messagebox.showerror('Token expired', 'I will fill in new token!')
