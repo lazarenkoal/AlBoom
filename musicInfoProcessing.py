@@ -73,7 +73,6 @@ input: name of album
 output: list of tracks
 """
 def get_tracks_from_album(artist_name, album_name, connection, status_handler):
-    # TODO: refactor it
     api_sub_root = construct_get_album_tracks_req_string(artist_name, album_name)       # getting sub root
     connection.request('GET', api_sub_root)                                             # making request
     response = connection.getresponse()                                                 # getting response

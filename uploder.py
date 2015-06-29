@@ -30,7 +30,7 @@ def upload_songs(artist, album, song_links, file_path, status_handler):
         song_name = folder_directory + '/' + song + '.mp3'
 
         # Uploading
-        urllib.request.urlretrieve(song_links[song][1],song_name)
+        urllib.request.urlretrieve(song_links[song][1], song_name)
 
         # Metadata correction
         metadata = MP3(song_name)
