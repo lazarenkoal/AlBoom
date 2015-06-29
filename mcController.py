@@ -54,6 +54,7 @@ class MainWindowViewController:
                                                                   self.main_window.display_status)
             upload_songs(self.artist, self.album, songs_with_links, file_path,
                          self.main_window.display_status)
+            self.album = ""
         else:
             messagebox.showerror(title='Empty album',
                                  message='You are trying to download nothing.'
@@ -91,6 +92,7 @@ class MainWindowViewController:
             i += 1
 
     def select_album(self):
+        self.songs_cache = [] # clearing information about songs
         chosen_album = self.main_window.albumsListBox.get(
             self.main_window.albumsListBox.curselection())
         self.album = chosen_album

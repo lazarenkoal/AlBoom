@@ -59,7 +59,6 @@ def find_albums(artist_name, connection):
     byte_data_about_albums = response.read()                            # reading response
     json_data_about_albums = byte_data_about_albums.decode('utf-8')     # getting string from bytes
     parsed_data = json.loads(json_data_about_albums)                    # parsing json
-    print(parsed_data)
     albums = parsed_data['topalbums']['album']                          # getting list of albums
     album_names = []
     for album in albums:
@@ -134,6 +133,7 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
             # handling empty search result (reason = son_name (fucking best version mafckc)
             if parsed_tracks['response'] == [0]:
                 track = re.sub(r'\([^)]*\)', '', track).strip() # deleting fucking (()) in title
+                track = track.strip(')')
                 request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
                 connection.request('GET', request_string)                                         # making request
                 response = connection.getresponse()                                               # getting response
@@ -146,8 +146,8 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
                 upload_dict[track] = [num, parsed_tracks['response'][1]['url']]
             time.sleep(1)
     except KeyError:
-        messagebox.showerror('Token expired', 'I will fill in new token!')
-        # TODO: use special function for gettin new token
+        messagebox.showerror('Fuckfuckfuck', 'Fuck you!')
+        # TODO: use special function for getting new token
     connection.close()                                                                    # closing connection
     return upload_dict                                                                  # returning links
 
