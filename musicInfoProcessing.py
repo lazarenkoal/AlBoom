@@ -59,6 +59,7 @@ def find_albums(artist_name, connection):
     byte_data_about_albums = response.read()                            # reading response
     json_data_about_albums = byte_data_about_albums.decode('utf-8')     # getting string from bytes
     parsed_data = json.loads(json_data_about_albums)                    # parsing json
+    print(parsed_data)
     albums = parsed_data['topalbums']['album']                          # getting list of albums
     album_names = []
     for album in albums:

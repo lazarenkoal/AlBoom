@@ -4,6 +4,7 @@ from musicInfoProcessing import *
 from uploder import *
 from PIL import Image, ImageTk
 from tkinter import filedialog
+
 __author__ = 'aleksandrlazarenko'
 
 
@@ -66,7 +67,8 @@ class MainWindowViewController:
             messagebox.showerror(title='No artist', message='Nothing, Everything, Anything, Something: '
                                                             'If you have nothing, then you have everything, '
                                                             'because you have the freedom to do anything, '
-                                                            'without the fear of losing something. So What??? Type artist!!!',
+                                                            'without the fear of losing something. So What??? '
+                                                            'Type artist!!!',
                                  )
         else:
             self.main_window.artistsListBox.delete(0, 'end')
@@ -135,5 +137,3 @@ class MainWindowViewController:
 
         print(url)
         return tk_image
-
-
