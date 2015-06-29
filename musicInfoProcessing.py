@@ -12,6 +12,7 @@ import time
 import re
 from tkinter import messagebox
 
+
 __author__ = 'aleksandrlazarenko'
 
 # General root for requests
@@ -142,7 +143,8 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
                 upload_dict[track] = parsed_tracks['response'][1]['url']
             time.sleep(1)
     except KeyError:
-        messagebox.showerror('Need new token', 'Sorry, but your token expired')
+        messagebox.showerror('Token expired', 'I will fill in new token!')
+        # TODO: use special func
     connection.close()                                                                    # closing connection
     return upload_dict                                                                  # returning links
 

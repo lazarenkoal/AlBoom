@@ -1,8 +1,5 @@
-from musicInfoProcessing import *
-from uploder import *
-import webbrowser
-import vk
-"""
+from selenium import webdriver
+
 url = ('https://oauth.vk.com/authorize?' +
        'client_id=4973489&' +
        'scope=audio&' +
@@ -10,6 +7,6 @@ url = ('https://oauth.vk.com/authorize?' +
        'display=page&' +
        'v=5.34&' +
        'response_type=token')
-
+"""
 webbrowser.open_new(url)
 """

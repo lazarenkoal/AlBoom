@@ -3,6 +3,8 @@
     <words>
       <w>artistmatches</w>
       <w>audioscrobbler</w>
+      <w>chromedriver</w>
+      <w>webdriver</w>
     </words>
   </dictionary>
 </component>

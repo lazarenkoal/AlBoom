@@ -3,10 +3,7 @@ Current module serves as music uploader
 :)
 """
 from os import makedirs
-from os import path
-from os import open
 import urllib
-from tkinter import messagebox
 """
 Uploads song to the directory, which is made for album
 input: artists name, album, dictionary with links ({song-name : link})
@@ -31,10 +28,10 @@ def upload_songs(artist, album, song_links, file_path, status_handler):
         song_name = folder_directory + '/' + song + '.mp3'
 
         # uploading
-
         urllib.request.urlretrieve(song_links[song], song_name)
         status_handler('Song uploaded', progress)
         progress += tick
+
     status_handler('Uploading completed', 100)
 
 

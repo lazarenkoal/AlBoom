@@ -14,11 +14,13 @@ root.title('Music Scooper')
 root.resizable(False, False)
 connection = None
 
-# TODO: placeholder!!!!
-def get_image(url="http://userserve-ak.last.fm/serve/174s/97263801.jpg"):
+def get_image(url):
+
     image_bytes = urlopen(url).read()
+
     # internal data file
     data_stream = io.BytesIO(image_bytes)
+
     # open as a PIL image object
     pil_image = Image.open(data_stream)
     tk_image = ImageTk.PhotoImage(pil_image)
@@ -34,13 +36,13 @@ upperMenuFrame.grid(row=0, columnspan=2)
 upperMenuItemsFrame = tk.Frame(master=upperMenuFrame)
 upperMenuItemsFrame.grid(row=0, column=0, sticky='W')
 
+
+artists_cache = []
+
 """
 Function for displaying list of artists in listBox
 returns names of artists, cause we need them for coming back
 """
-artists_cache = []
-
-
 def search_artist():
     global connection
     if connection is None:
@@ -149,7 +151,7 @@ def select_album():
     try:
         cover = get_image(image_url)
     except:
-        cover = None # TODO: find image for album placeholder
+        cover = None
     albumPhoto.configure(image=cover)
     albumPhoto.image = cover
     albumInfo.configure(state='normal')
@@ -257,9 +259,5 @@ songsList.configure(state='disabled')
 def display_status(status_string, progress_value=0):
     progressStatusLabel['text'] = status_string
     progressBar['value'] = progress_value
-
-# TODO: make normal event handling for chosen artist and album
-# TODO: debug everything
-# TODO: add an easy way for pasting vk access token inside in app
 
 root.mainloop()
