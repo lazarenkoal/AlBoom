@@ -6,6 +6,8 @@ from uploder import *
 import threading
 from tkinter import filedialog
 import io
+# TODO: create pop-up window for typing in VK credentials
+# TODO: create menu
 token = '58fca0ab24a05f6ec8579518e9585ea09679a02849fd66300e10bc581b8bea3fb08e645e97c860bab137e'
 
 root = tk.Tk()
@@ -14,14 +16,17 @@ root.title('Music Scooper')
 root.resizable(False, False)
 connection = None
 
+"""Returns image for showing album cover
+"""
 def get_image(url):
 
+    # Getting image from url
     image_bytes = urlopen(url).read()
 
-    # internal data file
+    # Internal data file
     data_stream = io.BytesIO(image_bytes)
 
-    # open as a PIL image object
+    # Open as a PIL image object
     pil_image = Image.open(data_stream)
     tk_image = ImageTk.PhotoImage(pil_image)
 

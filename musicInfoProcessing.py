@@ -2,7 +2,7 @@
 Current module contains functions for working with information
 related to artist. Searching, getting albums.
 Functions are using audioscrobbler API.
-Last update: 27.06.2015
+Last update: 29.06.2015
 """
 from urllib.request import *
 import http.client
@@ -131,7 +131,7 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
             print(parsed_tracks)
             # handling empty search result (reason = son_name (fucking best version mafckc)
             if parsed_tracks['response'] == [0]:
-                track = re.sub(r'\([^)]*\)', '', track).strip()
+                track = re.sub(r'\([^)]*\)', '', track).strip() # deleting fucking (()) in title
                 request_string = construct_get_search_vk_audio_string(author, track, token)       # constructing request
                 connection.request('GET', request_string)                                         # making request
                 response = connection.getresponse()                                               # getting response
@@ -144,7 +144,7 @@ def get_urls_of_tracks_for_downloading(author, list_of_names, token, handler):
             time.sleep(1)
     except KeyError:
         messagebox.showerror('Token expired', 'I will fill in new token!')
-        # TODO: use special func
+        # TODO: use special function for gettin new token
     connection.close()                                                                    # closing connection
     return upload_dict                                                                  # returning links
 

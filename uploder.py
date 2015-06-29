@@ -9,6 +9,7 @@ Uploads song to the directory, which is made for album
 input: artists name, album, dictionary with links ({song-name : link})
 """
 def upload_songs(artist, album, song_links, file_path, status_handler):
+
     # generating name for folder Ex: Desktop/Green Day - American Idiot
     folder_directory = file_path + '/' + artist + ' - ' + album
 

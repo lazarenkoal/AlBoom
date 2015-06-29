@@ -5,6 +5,8 @@ and other useful things.
 
 Last update: 27.06.2015
 """
+# TODO: rewrite everything with native urlencode
+
 __author__ = 'aleksandrlazarenko'
 
 # Api version and app credential
