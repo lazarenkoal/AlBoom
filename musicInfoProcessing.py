@@ -10,8 +10,7 @@ from requestHeaderConstructor import *
 import json
 import time
 import re
-from tkinter import messagebox
-
+from mcView import MainWindow
 
 __author__ = 'aleksandrlazarenko'
 
@@ -96,6 +95,9 @@ output: list of urls for uploading
 """
 def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
     # TODO: refactor it
+    # TODO: should return dictionary here {song_name : link_for_uploading)
+    upload_dict = {}                                                                          # list for urs
+    connection = http.client.HTTPSConnection(VKApiRoot)                                       # opening connection
     progress = 0
     max_progress = len(tracks)
     tick = int((1 / max_progress) * 100)
@@ -111,9 +113,9 @@ def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
             parsed_tracks = try_get_parsed_tracks(request_string)
             print(parsed_tracks)
             if parsed_tracks['error'] != [0]:
-                captcha_sid = parsed_tracks['captcha_sid']
-                captcha_img = parsed_tracks['captcha_img']
-                captcha_key = get_captcha_key(captcha_img) #TODO: get_captcha_key
+                captcha_sid = parsed_tracks['error']['captcha_sid']
+                captcha_img = parsed_tracks['error']['captcha_img']
+                captcha_key = MainWindow.get_captcha_key(captcha_img) #TODO: get_captcha_key
                 request_string = construct_vk_search_string_with_captcha(artist_name, track_name, token,
                                                                          captcha_sid, captcha_key)
                 continue

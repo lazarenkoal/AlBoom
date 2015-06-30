@@ -4,7 +4,7 @@ from musicInfoProcessing import *
 from uploder import *
 from PIL import Image, ImageTk
 from tkinter import filedialog
-
+import io
 __author__ = 'aleksandrlazarenko'
 
 artists = []
@@ -83,9 +83,9 @@ class MainWindowViewController:
 
     def select_artist(self):
         chosen_artist_index = self.main_window.artistsListBox.curselection()[0]
-        self.artist = artists[chosen_artist_index]
+        self.artist = artists[int(chosen_artist_index)]
         global albums
-        albums = find_albums(artists[chosen_artist_index]['artistId'], self.connection)
+        albums = find_albums(artists[int(chosen_artist_index)]['artistId'], self.connection)
         print(albums)
         self.main_window.albumsListBox.delete(0, 'end')
         i = 0
@@ -95,10 +95,10 @@ class MainWindowViewController:
 
     def select_album(self):
         chosen_album_index = self.main_window.albumsListBox.curselection()[0]
-        self.album = albums[chosen_album_index]
+        self.album = albums[int(chosen_album_index)]
         self.main_window.display_status('Collecting songs')
-        album_id = albums[chosen_album_index]['collectionId']
-        print(album_id)
+        #TODO: fix bug with first album
+        album_id = albums[int(chosen_album_index)]['collectionId']
         songs = get_tracks_from_album(album_id, self.connection, self.main_window.display_status)
 
         #Show album cover
@@ -108,12 +108,18 @@ class MainWindowViewController:
         self.main_window.albumPhoto.image = cover
         self.main_window.photo = cover
 
+        self.main_window.albumInfo.configure(state='normal')
+        self.main_window.albumInfo.delete(1.0, 'end')
+        self.main_window.albumInfo.insert(1.0, 'nothing to say')
+        self.main_window.albumInfo.configure(state='disabled')
+
         self.main_window.songsList.configure(state='normal')
         self.main_window.songsList.delete(1.0, 'end')
         self.main_window.songsList.insert(1.0,
                                           'Contents: {} - {}\n\n'.format(self.artist['artistName'],
                                                                          self.album['collectionName']))
         i = 1
+        self.songs_cache = [] # Clearing cache
         for song in songs[1:]:
             print(song)
             self.songs_cache.append(song)
@@ -122,7 +128,8 @@ class MainWindowViewController:
         self.main_window.songsList.configure(state='disabled')
         self.main_window.display_status('all songs collected', 100)
 
-    def get_image(self, url):
+    @staticmethod
+    def get_image(url):
         # Getting image from url
         image_bytes = urllib.request.urlopen(url).read()
 

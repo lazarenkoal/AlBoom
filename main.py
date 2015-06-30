@@ -1,8 +1,9 @@
 import mcController
 __author__ = 'aleksandrlazarenko'
 
-def main():
-    controller = mcController.MainWindowViewController(
-        token='8449e6d1b89e79efb038f6a7cb0f686f5cc9cd6f3e10a1bb2a0505085843575b80e8aa162811cc7dfc139')
 
-main()
+
+
+controller = mcController.MainWindowViewController(
+    token='0fb6a091be154e1330af856bf3e97a772993d76e5cb3e988a3971451a5e7cbe57b025138536cca63cf1ac')
+

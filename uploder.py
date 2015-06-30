@@ -34,13 +34,17 @@ def upload_songs(artist, album, tracks, file_path, status_handler):
 
         # Metadata correction
         metadata = MP3(song_name)
-        metadata['album'] = track['collectionName']
-        metadata['artist'] = track['artistName']
+        metadata.delete()
+        metadata['Album'] = track['collectionName']
+        metadata['Composer'] = track['artistName']
+        metadata['Title'] = track['trackName']
+        metadata['Artist'] = track['artistName']
+        metadata['tracknumber'] = str(track['trackNumber'])
+        metadata['date'] = track['releaseDate']
+        metadata['genre'] = track['primaryGenreName']
         metadata['performer'] = track['artistName']
-        #metadata['author'] = metadata['artist'] = track['artistName']
-        #metadata['tracknumber'] = track['trackNumber']
-        metadata['title'] = track['trackName']
-        print(metadata.tags)
+
+        metadata.update()
         metadata.save()
         status_handler('Song uploaded', progress)
         progress += tick

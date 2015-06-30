@@ -30,10 +30,12 @@ def construct_get_album_tracks_req_string(album_id):
 # constructing vk song search request
 def construct_vk_search_string(artist_name, track_name, token):
     q = '/method/audio.search?'
-    query = urlencode({'q': artist_name + ' ' + track_name, 'count': 1, 'access_token': token})
+    query = urlencode({'q': artist_name + ' ' + track_name, 'count': str(1), 'access_token': token})
+    print(q + query)
     return q + query
 
 def construct_vk_search_string_with_captcha(artist_name, track_name, token, captcha_sid, captcha_key):
-    q = construct_vk_search_string(artist_name,track_name,token)
-    query = urlencode({'caprcha_sid' : captcha_sid,'captcha_key' : captcha_key})
+    q = construct_vk_search_string(artist_name, track_name,token)
+    query = urlencode({'captcha_sid': str(captcha_sid), 'captcha_key': captcha_key})
+    print(q+'&' + query)
     return  q + query

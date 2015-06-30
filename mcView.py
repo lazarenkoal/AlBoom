@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import io
-import urllib
+import mcController
 __author__ = 'aleksandrlazarenko'
 
 """Main MusicScooper Window
@@ -28,6 +27,9 @@ class MainWindow:
         self.root.geometry('1100x700')
         self.root.title('Music Scooper')
         self.root.resizable(False, False)
+
+        # Creating pop-up
+        self.captcha_window = None
 
         # The highest, first frame for search and progress bar
         self.upperMenuFrame = tk.Frame(self.root)
@@ -137,8 +139,47 @@ class MainWindow:
         # Binding download btn listbox
         self.downloadAlbumBtn.bind('<1>', download_starter)
 
+
     def display_status(self, status_string, progress_value=0):
         self.progressStatusLabel['text'] = status_string
         self.progressBar['value'] = progress_value
 
+    @staticmethod
+    def get_captcha_key(url):
+        captcha_window = CaptchaWindow(url)
+        while True:
+            if captcha_window.key != "":
+                key = captcha_window.key
+                break
+        captcha_window.captcha_window.destroy()
+        return key
 
+class CaptchaWindow:
+
+    def __init__(self, captcha_url):
+
+        self.captcha_window = tk.Toplevel()
+        self.captcha_window.configure()
+        self.captcha_window.title('CAPTCHA eater')
+        self.captcha_window.resizable(False, False)
+
+        self.need_captcha_label = tk.Label(self.captcha_window, text='Please, enter CAPTCHa')
+        self.need_captcha_label.pack()
+
+        self.captcha_enter = tk.Entry(self.captcha_window)
+        self.captcha_enter.pack()
+
+        self.submit_btn = tk.Button(self.captcha_window, text='Send CAPTCHa')
+        self.submit_btn.bind('<1>', self.get_key)
+        self.submit_btn.pack()
+
+        self.captcha_display = tk.Label(self.captcha_window)
+        captcha_img = mcController.MainWindowViewController.get_image(captcha_url)
+        self.captcha_display.configure(image=captcha_img)
+        self.captcha_display.image = captcha_img
+        self.captcha_display.pack()
+
+        self.key = ""
+
+    def get_key(self, event):
+        self.key = self.captcha_enter.get()
