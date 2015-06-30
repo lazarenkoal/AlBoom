@@ -6,16 +6,19 @@ Last update: 29.06.2015
 """
 from urllib.request import *
 import http.client
-from request_constructor import *
-import json
+from requestHeaderConstructor import *
 import time
 import re
-from tkinter import messagebox
-import main_view
+import json
+import mcView
+__author__ = 'aleksandrlazarenko'
 
 # General root for requests
 APIRoot = 'itunes.apple.com'        # ITunes API root path
 VKApiRoot = 'api.vk.com'            # VK API root path
+
+# To establish connection connection = http.client.HTTPConnection(APIRoot)
+
 
 """
 Function finds information about artists
@@ -92,6 +95,10 @@ def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
     progress = 0
     max_progress = len(tracks)
     tick = int((1 / max_progress) * 100)
+
+    if token == "" or not mcView.check_token(token):
+        # TODO: make token saver, when there will be saver
+        token = mcView.get_token()
 
     for track, i in zip(tracks, range(0, len(tracks), 1)):                           # go foreach song in album
         handler('getting links', progress)

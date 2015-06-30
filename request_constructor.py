@@ -39,3 +39,9 @@ def construct_vk_search_string_with_captcha(artist_name, track_name, token, capt
     query = urlencode({'captcha_sid': str(captcha_sid), 'captcha_key': captcha_key})
     print(q + '&'  + query)
     return  q + query
+
+def construct_vk_check_token(token):
+    q = '/method/secure.checkToken?'
+    query = urlencode({'token': token})
+    print(q + query)
+    return q + query
