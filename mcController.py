@@ -94,7 +94,7 @@ class MainWindowViewController:
             i += 1
 
     def select_album(self):
-        chosen_album_index = self.main_window.albumsListBox.curselection()[0]
+        chosen_album_index = self.main_window.albumsListBox.curselection()[0] + 1
         self.album = albums[int(chosen_album_index)]
         self.main_window.display_status('Collecting songs')
         #TODO: fix bug with first album
