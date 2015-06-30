@@ -32,7 +32,7 @@ def construct_vk_search_string(artist_name, track_name, token):
     q = '/method/audio.search?'
     query = urlencode({'q': artist_name + ' ' + track_name, 'count': str(1), 'access_token': token})
     print(q + query)
-    return q + query
+    return q + query + '&'
 
 def construct_vk_search_string_with_captcha(artist_name, track_name, token, captcha_sid, captcha_key):
     q = construct_vk_search_string(artist_name, track_name,token)

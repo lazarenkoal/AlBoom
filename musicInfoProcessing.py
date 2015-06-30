@@ -111,8 +111,9 @@ def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
 
         while True:
             parsed_tracks = try_get_parsed_tracks(request_string)
+            time.sleep(0.35)
             print(parsed_tracks)
-            if parsed_tracks['error'] != [0]:
+            if 'error' in parsed_tracks and parsed_tracks['error'] != [0]:
                 captcha_sid = parsed_tracks['error']['captcha_sid']
                 captcha_img = parsed_tracks['error']['captcha_img']
                 captcha_key = MainWindow.get_captcha_key(captcha_img) #TODO: get_captcha_key
@@ -128,7 +129,6 @@ def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
             if parsed_tracks['response'] != [0]:
                 tracks[i]['trackUrl'] = parsed_tracks['response'][1]['url']
                 break
-            time.sleep(0.5)
 
     connection.close()                                                                # closing connection
     return tracks
