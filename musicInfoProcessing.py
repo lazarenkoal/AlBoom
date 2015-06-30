@@ -77,6 +77,16 @@ def get_tracks_from_album(album_id, connection, status_handler):
     songs = parsed_data['results'] 
     return songs
 
+connection = 'connection'
+def try_get_parsed_tracks(request_string):
+    global connection
+    connection = http.client.HTTPSConnection(VKApiRoot)
+    connection.request('GET', request_string)                                         # making request
+    response = connection.getresponse()                                               # getting response
+    byte_tracks = response.read()                                                     # reading bytes from response
+    json_tracks = byte_tracks.decode('utf-8')                                         # decoding
+    parsed_tracks = json.loads(json_tracks)
+    return parsed_tracks
 """
 Gets urls of tracks from VK
 API method: audio.search
@@ -86,41 +96,37 @@ output: list of urls for uploading
 """
 def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
     # TODO: refactor it
-    # TODO: should return dictionary here {song_name : link_for_uploading)
-    upload_dict = {}                                                                          # list for urs
-    connection = http.client.HTTPSConnection(VKApiRoot)                                       # opening connection
     progress = 0
     max_progress = len(tracks)
     tick = int((1 / max_progress) * 100)
-    try:
-        for track, i in zip(tracks, range(0, len(tracks), 1)):                           # go foreach song in album
-            handler('getting links', progress)
-            progress += tick
-            track_name = track['trackName']
-            request_string = construct_get_search_vk_audio_string(author['artistName'], track_name, token)       # constructing request
-            connection.request('GET', request_string)                                         # making request
-            response = connection.getresponse()                                               # getting response
-            byte_tracks = response.read()                                                     # reading bytes from response
-            json_tracks = byte_tracks.decode('utf-8')                                         # decoding
-            parsed_tracks = json.loads(json_tracks)                                           # parsing json
 
+    for track, i in zip(tracks, range(0, len(tracks), 1)):                           # go foreach song in album
+        handler('getting links', progress)
+        progress += tick
+        track_name = track['trackName']
+        artist_name = author['artistName']
+        request_string = construct_vk_search_string(artist_name, track_name, token)  # constructing request
+
+        while True:
+            parsed_tracks = try_get_parsed_tracks(request_string)
             print(parsed_tracks)
-            # handling empty search result (reason = son_name (fucking best version mafckc)
+            if parsed_tracks['error'] != [0]:
+                captcha_sid = parsed_tracks['captcha_sid']
+                captcha_img = parsed_tracks['captcha_img']
+                captcha_key = get_captcha_key(captcha_img) #TODO: get_captcha_key
+                request_string = construct_vk_search_string_with_captcha(artist_name, track_name, token,
+                                                                         captcha_sid, captcha_key)
+                continue
             if parsed_tracks['response'] == [0]:
-                track_name = re.sub(r'\([^)]*\)', '', track['trackName']).strip() # deleting fucking (()) in title
-                request_string = construct_get_search_vk_audio_string(author['artistName'], track_name, token)       # constructing request
-                connection.request('GET', request_string)                                         # making request
-                response = connection.getresponse()                                               # getting response
-                byte_tracks = response.read()                                                     # reading bytes from response
-                json_tracks = byte_tracks.decode('utf-8')                                         # decoding
-                parsed_tracks = json.loads(json_tracks)
-
+                old_track_name = track_name
+                track_name = re.sub(r'\([^)]*\)', '', old_track_name).strip()
+                if old_track_name == track_name:
+                    break
+                request_string = construct_vk_search_string(artist_name, track_name, token)
             if parsed_tracks['response'] != [0]:
                 tracks[i]['trackUrl'] = parsed_tracks['response'][1]['url']
-            time.sleep(1)
-    except KeyError:
-        messagebox.showerror('Token expired', 'I will fill in new token!')
-        # TODO: use special function for gettin new token
-    connection.close()                                                                    # closing connection
-    return tracks                                                                # returning links
+                break
+            time.sleep(0.5)
 
+    connection.close()                                                                # closing connection
+    return tracks

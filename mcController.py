@@ -108,11 +108,6 @@ class MainWindowViewController:
         self.main_window.albumPhoto.image = cover
         self.main_window.photo = cover
 
-        self.main_window.albumInfo.configure(state='normal')
-        self.main_window.albumInfo.delete(1.0, 'end')
-        self.main_window.albumInfo.insert(1.0, info)
-        self.main_window.albumInfo.configure(state='disabled')
-
         self.main_window.songsList.configure(state='normal')
         self.main_window.songsList.delete(1.0, 'end')
         self.main_window.songsList.insert(1.0,
