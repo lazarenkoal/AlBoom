@@ -7,6 +7,8 @@ from tkinter import filedialog
 
 __author__ = 'aleksandrlazarenko'
 
+artists = []
+albums = []
 
 class MainWindowViewController:
     def __init__(self, token):
@@ -72,54 +74,50 @@ class MainWindowViewController:
                                  )
         else:
             self.main_window.artistsListBox.delete(0, 'end')
+            global artists
             artists = find_artists(search_string, self.connection)
-            self.artists_cache = artists[:]
             counter = 0
             for artist in artists:
-                self.main_window.artistsListBox.insert(counter, artist)
+                self.main_window.artistsListBox.insert(counter, artist['artistName'])
                 counter += 1
 
     def select_artist(self):
-        chosen_artist = self.main_window.artistsListBox.get(
-            self.main_window.artistsListBox.curselection())
-        self.artist = chosen_artist
-        albums = find_albums(chosen_artist, self.connection)
+        chosen_artist_index = self.main_window.artistsListBox.curselection()[0]
+        self.artist = artists[chosen_artist_index]
+        global albums
+        albums = find_albums(artists[chosen_artist_index]['artistId'], self.connection)
+        print(albums)
         self.main_window.albumsListBox.delete(0, 'end')
         i = 0
-        for album in albums:
-            self.main_window.albumsListBox.insert(i, album)
+        for album in albums[1:]:
+            self.main_window.albumsListBox.insert(i, album['collectionName'])
             i += 1
 
     def select_album(self):
-        chosen_album = self.main_window.albumsListBox.get(
-            self.main_window.albumsListBox.curselection())
-        self.album = chosen_album
-        self.main_window.display_status('collecting songs')
-        songs, image_url, info = get_tracks_from_album(self.artist, chosen_album,
-                                                       self.connection,
-                                                       self.main_window.display_status)
+        chosen_album_index = self.main_window.albumsListBox.curselection()[0]
+        self.album = albums[chosen_album_index]
+        self.main_window.display_status('Collecting songs')
+        album_id = albums[chosen_album_index]['collectionId']
+        print(album_id)
+        songs = get_tracks_from_album(album_id, self.connection, self.main_window.display_status)
 
-        print('Пытаюсь открыть картинку')
-        cover = self.get_image(image_url)
+        #Show album cover
+        cover = self.get_image(self.album['artworkUrl100'])
 
         self.main_window.albumPhoto.configure(image=cover)
         self.main_window.albumPhoto.image = cover
         self.main_window.photo = cover
 
-        self.main_window.albumInfo.configure(state='normal')
-        self.main_window.albumInfo.delete(1.0, 'end')
-        self.main_window.albumInfo.insert(1.0, info)
-        self.main_window.albumInfo.configure(state='disabled')
-
         self.main_window.songsList.configure(state='normal')
         self.main_window.songsList.delete(1.0, 'end')
         self.main_window.songsList.insert(1.0,
-                                          'Contents: {} - {}\n\n'.format(self.artist,
-                                                                         self.album))
+                                          'Contents: {} - {}\n\n'.format(self.artist['artistName'],
+                                                                         self.album['collectionName']))
         i = 1
-        for song in songs:
+        for song in songs[1:]:
+            print(song)
             self.songs_cache.append(song)
-            self.main_window.songsList.insert('end', '{}) {}\n'.format(i, song))
+            self.main_window.songsList.insert('end', '{}) {}\n'.format(i, song['trackName']))
             i += 1
         self.main_window.songsList.configure(state='disabled')
         self.main_window.display_status('all songs collected', 100)

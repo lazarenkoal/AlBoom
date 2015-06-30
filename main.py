@@ -3,6 +3,6 @@ __author__ = 'aleksandrlazarenko'
 
 def main():
     controller = mcController.MainWindowViewController(
-        token='58fca0ab24a05f6ec8579518e9585ea09679a02849fd66300e10bc581b8bea3fb08e645e97c860bab137e')
+        token='5cfe03a5108700d7c2e6021a17646c10ed8fda73447314bbf7f41209c0dc1cf6010329d1b1c61568813fe')
 
 main()

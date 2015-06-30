@@ -9,29 +9,22 @@ from urllib.parse import urlencode
 
 __author__ = 'aleksandrlazarenko'
 
-# Api version and app credential
-APIVersion = '/2.0/?'
-APIKey = 'fd7e3140266c89c8912cd7f632abc289'
-
 # constructing request string for artist search
 def construct_find_artist_req_str(artist_name):
-    query = urlencode({'method': 'artist.search', 'artist': artist_name, 'api_key': APIKey,
-                       'format': 'json'})
-    return APIVersion + query
+    query = urlencode({'term': artist_name, 'entity': 'musicArtist', 'format': 'json'})
+    return '/search?' + query
 
 
 # constructing request string for album search
-def construct_find_albums_req_string(artist_name):
-    query = urlencode({'method': 'artist.gettopalbums', 'artist': artist_name, 'api_key':
-        APIKey, 'format': 'json'})
-    return APIVersion + query
+def construct_find_albums_req_string(artist_id):
+    query = urlencode({'id': artist_id, 'entity': 'album', 'format': 'json'})
+    return '/lookup?' + query
 
 
 # constructing request string for list of tracks
-def construct_get_album_tracks_req_string(artist_name, album_name):
-    query = urlencode({'method': 'album.getinfo', 'api_key': APIKey, 'artist': artist_name,
-                       'album': album_name, 'format': 'json'})
-    return APIVersion + query
+def construct_get_album_tracks_req_string(album_id):
+    query = urlencode({'id': album_id, 'entity': 'song', 'format': 'json'})
+    return '/lookup?' + query
 
 
 # constructing vk song search request

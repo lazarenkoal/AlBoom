@@ -22,7 +22,7 @@ def get_access_token(user_login, user_password):
                'response_type=token')
 
         # Launching webdriver and opening auth page
-        driver = webdriver.Chrome(executable_path='/Users/aleksandrlazarenko/PycharmProjects/MusicScooper/chromedriver')
+        driver = webdriver.Chrome(executable_path='/Users//PycharmProjects/MusicScooper/chromedriver')
         driver.get(url)
 
         # Pasting into email field
