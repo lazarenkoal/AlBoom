@@ -2,7 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import mcController
-
+import http.client
+from requestHeaderConstructor import construct_vk_check_token
+import json
+from musicInfoProcessing import VKApiRoot
+import time
 __author__ = 'aleksandrlazarenko'
 
 """Main MusicScooper Window
@@ -155,17 +159,6 @@ class MainWindow:
         captcha_window.captcha_window.destroy()
         return key
 
-    @staticmethod
-    def get_token():
-        token_window = TokenWindow()
-        while True:
-            if token_window.token != "":
-                token = token_window.token
-                break
-        token_window.token_window.destroy()
-        return token
-
-
 class TokenWindow:
     def __init__(self):
         self.AUTH_URL = ('https://oauth.vk.com/authorize?' +
@@ -181,10 +174,10 @@ class TokenWindow:
         self.token_window.resizable(False, False)
 
         self.token_instruction = tk.Text(self.token_window)
-        self.token_instruction.insert(1.0, 'Hello, dear user! We need your permission for using VK')
-        self.token_instruction.insert(2.0, 'You have to follow this link: {}'.format(self.AUTH_URL))
-        self.token_instruction.insert(3.0, 'After giving your permission you will be redirected')
-        self.token_instruction.insert(4.0, 'Just paste final url and click on submit btn!')
+        self.token_instruction.insert(1.0, 'Hello, dear user! We need your permission for using VK\n')
+        self.token_instruction.insert(2.0, 'You have to follow this link:\n{}\n'.format(self.AUTH_URL))
+        self.token_instruction.insert(3.0, 'After giving your permission you will be redirected\n')
+        self.token_instruction.insert(4.0, 'Just paste final url and click on submit btn!\n')
         self.token_instruction.pack()
 
         self.enter_url_field = tk.Entry(self.token_window)
@@ -201,6 +194,31 @@ class TokenWindow:
     def get_new_token(self, event):
         self.token_url = self.enter_url_field.get()
         self.token = self.token_url.split('#')[1].split('&')[0].split('=')[1]
+
+def check_token(token):
+    api_sub_root = construct_vk_check_token(token)
+    conn = http.client.HTTPConnection(VKApiRoot)
+    conn.request('GET', api_sub_root)
+    response = conn.getresponse()
+    byte_data_about_token = response.read()
+    json_data_about_token = byte_data_about_token.decode('utf-8')     # getting string from bytes
+    parsed_data = json.loads(json_data_about_token)                    # parsing json
+    if 'error' in parsed_data:
+        return False
+    else:
+        return True
+
+
+def get_token():
+    token_window = TokenWindow()
+    while True:
+        if token_window.token != "":
+            token = token_window.token
+            break
+        time.sleep(2)
+    token_window.token_window.destroy()
+    return token
+
 
 class CaptchaWindow:
     def __init__(self, captcha_url):
