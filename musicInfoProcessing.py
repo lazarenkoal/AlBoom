@@ -11,7 +11,7 @@ import json
 import time
 import re
 from tkinter import messagebox
-
+import mcView
 
 __author__ = 'aleksandrlazarenko'
 
@@ -29,7 +29,6 @@ input: name of the artist
 output: all found artists
 """
 def find_artists(artist_name, connection):
-    # TODO: refactor it
     api_sub_root = construct_find_artist_req_str(artist_name)           # getting sub root
     connection.request('GET', api_sub_root)                             # making request
     response = connection.getresponse()                                 # getting response
@@ -113,7 +112,7 @@ def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
             if 'error' in parsed_tracks and parsed_tracks['error'] != [0]:
                 captcha_sid = parsed_tracks['error']['captcha_sid']
                 captcha_img = parsed_tracks['error']['captcha_img']
-                captcha_key = MainWindow.get_captcha_key(captcha_img)
+                captcha_key = mcView.MainWindow.get_captcha_key(captcha_img)
                 request_string = construct_vk_search_string_with_captcha(artist_name, track_name, token,
                                                                          captcha_sid, captcha_key)
                 continue

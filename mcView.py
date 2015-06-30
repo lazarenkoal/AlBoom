@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import mcController
+
 __author__ = 'aleksandrlazarenko'
 
 """Main MusicScooper Window
@@ -10,6 +11,7 @@ __author__ = 'aleksandrlazarenko'
 
 class MainWindow:
     def __init__(self, search_starter, artist_selector, album_getter, download_starter):
+
         self.WELCOME_TEXT = ('Welcome to Music Scooper! Absolutely free tool'
                              ' for downloading music by albums from VK social network.'
                              ' Type in your favourite musician and begin uploading!'
@@ -24,7 +26,7 @@ class MainWindow:
 
         # Configuring root
         self.root = tk.Tk()
-        self.root.geometry('1100x700')
+        self.root.geometry('1081x700')
         self.root.title('Music Scooper')
         self.root.resizable(False, False)
 
@@ -66,7 +68,7 @@ class MainWindow:
         self.progressBar['maximum'] = 100
 
         # Main left frame
-        self.leftFrame = tk.Frame(self.root, bd=5)
+        self.leftFrame = tk.LabelFrame(self.root, bd=2, relief='ridge', pady=5, padx=5)
         self.leftFrame.grid(row=2, column=0)
         self.leftFrame.grid_rowconfigure(0, weight=1)
         self.leftFrame.grid_rowconfigure(1, weight=1)
@@ -78,7 +80,7 @@ class MainWindow:
 
         # ListBox for displaying found musicians
         self.artistsListBox = tk.Listbox(self.leftFrame, selectmode='SINGLE', height=17, width=66)
-        self.artistsListBox.grid(row=1, sticky='n')
+        self.artistsListBox.grid(row=1, column=0, sticky='n')
         self.artistsListBox.yview()
 
         # Label for displaying "Albums" text
@@ -87,7 +89,7 @@ class MainWindow:
 
         # ListBox for displaying found albums
         self.albumsListBox = tk.Listbox(self.leftFrame, selectmode='SINGLE', height=17, width=66)
-        self.albumsListBox.grid(row=3, sticky='N')
+        self.albumsListBox.grid(row=3, column=0, sticky='N')
         self.albumsListBox.yview()
 
         # Right little menu frame
@@ -99,17 +101,17 @@ class MainWindow:
         self.downloadAlbumBtn.grid(row=0, column=0)
 
         # Main right frame
-        self.rightFrame = tk.Frame(self.root)
+        self.rightFrame = tk.LabelFrame(self.root, padx=5, pady=9, bd=2, relief='ridge')
         self.rightFrame.grid(row=2, column=1)
         self.rightFrame.grid_rowconfigure(0, weight=1)
 
         # Preparing start image
-        self.image_bytes = Image.open("logo.jpg")
-        self.photo = ImageTk.PhotoImage(self.image_bytes)
+        self.logo_image_bytes = Image.open("logo.jpg")
+        self.photo_logo = ImageTk.PhotoImage(self.logo_image_bytes)
 
         # Setting starting image
         self.albumPhoto = tk.Label(self.rightFrame)
-        self.albumPhoto['image'] = self.photo
+        self.albumPhoto['image'] = self.photo_logo
         self.albumPhoto.grid(row=0, column=0, sticky='W')
 
         # Preparing Welcome text
@@ -139,7 +141,6 @@ class MainWindow:
         # Binding download btn listbox
         self.downloadAlbumBtn.bind('<1>', download_starter)
 
-
     def display_status(self, status_string, progress_value=0):
         self.progressStatusLabel['text'] = status_string
         self.progressBar['value'] = progress_value
@@ -154,12 +155,56 @@ class MainWindow:
         captcha_window.captcha_window.destroy()
         return key
 
+    @staticmethod
+    def get_token():
+        token_window = TokenWindow()
+        while True:
+            if token_window.token != "":
+                token = token_window.token
+                break
+        token_window.token_window.destroy()
+        return token
+
+
+class TokenWindow:
+    def __init__(self):
+        self.AUTH_URL = ('https://oauth.vk.com/authorize?' +
+                         'client_id=4973489&' +
+                         'scope=audio&' +
+                         'redirect_uri=https://oauth.vk.com/blank.html&' +
+                         'display=page&' +
+                         'v=5.34&' +
+                         'response_type=token')
+
+        self.token_window = tk.Toplevel()
+        self.token_window.title('Token eater')
+        self.token_window.resizable(False, False)
+
+        self.token_instruction = tk.Text(self.token_window)
+        self.token_instruction.insert(1.0, 'Hello, dear user! We need your permission for using VK')
+        self.token_instruction.insert(2.0, 'You have to follow this link: {}'.format(self.AUTH_URL))
+        self.token_instruction.insert(3.0, 'After giving your permission you will be redirected')
+        self.token_instruction.insert(4.0, 'Just paste final url and click on submit btn!')
+        self.token_instruction.pack()
+
+        self.enter_url_field = tk.Entry(self.token_window)
+        self.enter_url_field.pack()
+        self.enter_url_field.bind('<Return>', self.get_new_token)
+
+        self.submit_btn = tk.Button(self.token_window, text='Submit')
+        self.submit_btn.pack()
+        self.submit_btn.bind('<1>', self.get_new_token)
+
+        self.token = ""
+        self.token_url = ""
+
+    def get_new_token(self, event):
+        self.token_url = self.enter_url_field.get()
+        self.token = self.token_url.split('#')[1].split('&')[0].split('=')[1]
+
 class CaptchaWindow:
-
     def __init__(self, captcha_url):
-
         self.captcha_window = tk.Toplevel()
-        self.captcha_window.configure()
         self.captcha_window.title('CAPTCHA eater')
         self.captcha_window.resizable(False, False)
 
@@ -168,6 +213,7 @@ class CaptchaWindow:
 
         self.captcha_enter = tk.Entry(self.captcha_window)
         self.captcha_enter.pack()
+        self.captcha_enter.bind('<Return>', self.get_key)
 
         self.submit_btn = tk.Button(self.captcha_window, text='Send CAPTCHa')
         self.submit_btn.bind('<1>', self.get_key)

@@ -94,19 +94,19 @@ class MainWindowViewController:
             i += 1
 
     def select_album(self):
-        chosen_album_index = self.main_window.albumsListBox.curselection()[0] + 1
-        self.album = albums[int(chosen_album_index)]
+        chosen_album_index = int(self.main_window.albumsListBox.curselection()[0]) + 1
+        self.album = albums[chosen_album_index]
         self.main_window.display_status('Collecting songs')
-        #TODO: fix bug with first album
-        album_id = albums[int(chosen_album_index)]['collectionId']
+
+        album_id = albums[chosen_album_index]['collectionId']
         songs = get_tracks_from_album(album_id, self.connection, self.main_window.display_status)
 
-        #Show album cover
+        # Show album cover
         cover = self.get_image(self.album['artworkUrl100'])
 
         self.main_window.albumPhoto.configure(image=cover)
         self.main_window.albumPhoto.image = cover
-        self.main_window.photo = cover
+        self.main_window.photo_logo = cover
 
         self.main_window.albumInfo.configure(state='normal')
         self.main_window.albumInfo.delete(1.0, 'end')
