@@ -16,22 +16,25 @@ __author__ = 'aleksandrlazarenko'
 class MainWindow:
     def __init__(self, search_starter, artist_selector, album_getter, download_starter):
 
-        self.WELCOME_TEXT = ('Welcome to Music Scooper! Absolutely free tool'
-                             ' for downloading music by albums from VK social network.'
-                             ' Type in your favourite musician and begin uploading!'
-                             '\n\nBeautiful music is the art of the prophets that can calm the agitations of the soul; '
-                             'it is one of the most magnificent and delightful presents God has given us.'
+        self.WELCOME_TEXT = ('Добро пожаловать в AlBoom! Это программа для загрузки'
+                             'альбомов твоих любимых исполнителей через Вконтакте.'
+                             'Просто введи имя исполнителя и выбери альбом.'
+                             '\n\nBeautiful music is the art of the prophets that '
+                             'can calm the agitations of the soul '
+                             'it is one of the most magnificent and delightful '
+                             'presents God has given us.'
                              '\n\nMartin Luther')
 
-        self.BASIC_INSTRUCTION = ('Instruction\n'
-                                  '1) Find desired musician\n'
-                                  '2) Pick album\n'
-                                  '3) Download it!!!')
+        self.BASIC_INSTRUCTION = ('Что делать?\n'
+                                  '1) Введи имя артиста и нажми "Найти"\n'
+                                  '2) Кликни 2 раза по нужному имени\n'
+                                  '3) Кликни 2 раза по нужному альбому\n'
+                                  '4) Нажми "Скачать альбом"')
 
         # Configuring root
         self.root = tk.Tk()
         self.root.geometry('1081x700')
-        self.root.title('Music Scooper')
+        self.root.title('AlBoom')
         self.root.resizable(False, False)
 
         # Creating pop-up
@@ -62,7 +65,7 @@ class MainWindow:
         self.leftSubMenuFrame.grid(row=1, column=0)
 
         # Label for progress status
-        self.progressStatusLabel = tk.Label(self.leftSubMenuFrame, text='Что искать, хозяин?')
+        self.progressStatusLabel = tk.Label(self.leftSubMenuFrame, text='Готов искать')
         self.progressStatusLabel.grid(row=0, column=0, sticky='E')
 
         # Progress bar
@@ -79,7 +82,7 @@ class MainWindow:
         self.leftFrame.grid_columnconfigure(0, weight=1)
 
         # Label for "Search results2
-        self.artistLbl = tk.Label(self.leftFrame, text='Search results')
+        self.artistLbl = tk.Label(self.leftFrame, text='Результаты поиска')
         self.artistLbl.grid(row=0)
 
         # ListBox for displaying found musicians
@@ -88,7 +91,7 @@ class MainWindow:
         self.artistsListBox.yview()
 
         # Label for displaying "Albums" text
-        self.albumLbl = tk.Label(self.leftFrame, text='Albums')
+        self.albumLbl = tk.Label(self.leftFrame, text='Альбомы')
         self.albumLbl.grid(row=2, sticky='N')
 
         # ListBox for displaying found albums
@@ -170,12 +173,12 @@ class TokenWindow:
                          'response_type=token')
 
         self.token_window = tk.Toplevel()
-        self.token_window.title('Token eater')
+        self.token_window.title('Нужен токен')
         self.token_window.resizable(False, False)
 
         self.token_instruction = tk.Text(self.token_window)
-        self.token_instruction.insert(1.0, 'Hello, dear user! We need your permission for using VK\n')
-        self.token_instruction.insert(2.0, 'You have to follow this link:\n{}\n'.format(self.AUTH_URL))
+        self.token_instruction.insert(1.0, 'Дорогой пользователь,\n')
+        self.token_instruction.insert(2.0, 'Нам нужно получить токен для скачивания кнопки:\n{}\n'.format(self.AUTH_URL))
         self.token_instruction.insert(3.0, 'After giving your permission you will be redirected\n')
         self.token_instruction.insert(4.0, 'Just paste final url and click on submit btn!\n')
         self.token_instruction.pack()
@@ -184,7 +187,7 @@ class TokenWindow:
         self.enter_url_field.pack()
         self.enter_url_field.bind('<Return>', self.get_new_token)
 
-        self.submit_btn = tk.Button(self.token_window, text='Submit')
+        self.submit_btn = tk.Button(self.token_window, text='Отправить')
         self.submit_btn.pack()
         self.submit_btn.bind('<1>', self.get_new_token)
 
@@ -223,22 +226,22 @@ def get_token():
 class CaptchaWindow:
     def __init__(self, captcha_url):
         self.captcha_window = tk.Toplevel()
-        self.captcha_window.title('CAPTCHA eater')
+        self.captcha_window.title('Captcha')
         self.captcha_window.resizable(False, False)
 
-        self.need_captcha_label = tk.Label(self.captcha_window, text='Please, enter CAPTCHa')
+        self.need_captcha_label = tk.Label(self.captcha_window, text='Что там написано?')
         self.need_captcha_label.pack()
 
         self.captcha_enter = tk.Entry(self.captcha_window)
         self.captcha_enter.pack()
         self.captcha_enter.bind('<Return>', self.get_key)
 
-        self.submit_btn = tk.Button(self.captcha_window, text='Send CAPTCHa')
+        self.submit_btn = tk.Button(self.captcha_window, text='Это')
         self.submit_btn.bind('<1>', self.get_key)
         self.submit_btn.pack()
 
         self.captcha_display = tk.Label(self.captcha_window)
-        captcha_img = mcController.MainWindowViewController.get_image(captcha_url)
+        captcha_img = main_controller.MainWindowViewController.get_image(captcha_url)
         self.captcha_display.configure(image=captcha_img)
         self.captcha_display.image = captcha_img
         self.captcha_display.pack()
