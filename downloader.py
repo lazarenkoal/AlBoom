@@ -1,6 +1,7 @@
 """
 This module downloads tracks
 """
+import os
 from os import makedirs
 import urllib
 from mutagen.mp3 import EasyMP3 as MP3
@@ -12,12 +13,13 @@ def download_songs(artist, album, tracks, file_path, status_handler):
 
     #Create folder
     folder_directory = file_path + '/' + artist['artistName'] + ' - ' + album['collectionName']
-    makedirs(folder_directory)
+    if not os.path.exists(folder_directory):
+        makedirs(folder_directory)
 
     progress = 0
-    print(tracks)
     tick = int((1 / len(tracks)) * 100)
 
+    print(tracks)
     # Download every fucking track from dict
     for track in tracks:
         status_handler('Downloading track: ' + track['trackName'], progress)

@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import mcController
+import main_controller
 import http.client
-from requestHeaderConstructor import construct_vk_check_token
+from request_constructor import construct_vk_check_token
 import json
-from musicInfoProcessing import VKApiRoot
+from music_info_processing import VKApiRoot
 import time
 __author__ = 'aleksandrlazarenko'
 
@@ -46,7 +46,7 @@ class MainWindow:
         self.upperMenuItemsFrame.grid(row=0, column=0, sticky='W')
 
         # Label for search field
-        self.searchLabel = tk.Label(master=self.upperMenuItemsFrame, text='Enter artist')
+        self.searchLabel = tk.Label(master=self.upperMenuItemsFrame, text='Имя артиста:')
         self.searchLabel.grid(row=0, column=0, sticky='w')
 
         # Search field
@@ -54,7 +54,7 @@ class MainWindow:
         self.searchEnter.grid(row=0, column=1, sticky='W')
 
         # Search button
-        self.searchBtn = tk.Button(self.upperMenuItemsFrame, text='Search')
+        self.searchBtn = tk.Button(self.upperMenuItemsFrame, text='Найти')
         self.searchBtn.grid(row=0, column=2)
 
         # Left little menu frame
@@ -62,7 +62,7 @@ class MainWindow:
         self.leftSubMenuFrame.grid(row=1, column=0)
 
         # Label for progress status
-        self.progressStatusLabel = tk.Label(self.leftSubMenuFrame, text='Waiting for your commands')
+        self.progressStatusLabel = tk.Label(self.leftSubMenuFrame, text='Что искать, хозяин?')
         self.progressStatusLabel.grid(row=0, column=0, sticky='E')
 
         # Progress bar
@@ -101,7 +101,7 @@ class MainWindow:
         self.rightSubMenuFrame.grid(row=1, column=1)
 
         # Button for uploading album
-        self.downloadAlbumBtn = tk.Button(self.rightSubMenuFrame, text='upload album')
+        self.downloadAlbumBtn = tk.Button(self.rightSubMenuFrame, text='Скачать альбом')
         self.downloadAlbumBtn.grid(row=0, column=0)
 
         # Main right frame
