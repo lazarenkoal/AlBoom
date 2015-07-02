@@ -7,6 +7,8 @@ from request_constructor import construct_vk_check_token
 import json
 from music_info_processing import VKApiRoot
 import time
+import webbrowser
+
 __author__ = 'aleksandrlazarenko'
 
 """Main MusicScooper Window
@@ -14,7 +16,7 @@ __author__ = 'aleksandrlazarenko'
 
 
 class MainWindow:
-    def __init__(self, search_starter, artist_selector, album_getter, download_starter):
+    def __init__(self, search_starter, artist_selector, album_getter, download_starter, spent_money):
 
         self.WELCOME_TEXT = ('Добро пожаловать в AlBoom! Это программа для загрузки'
                              'альбомов твоих любимых исполнителей через Вконтакте.'
@@ -59,6 +61,10 @@ class MainWindow:
         # Search button
         self.searchBtn = tk.Button(self.upperMenuItemsFrame, text='Найти')
         self.searchBtn.grid(row=0, column=2)
+
+        # Amount of money display
+        self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {}$'.format(spent_money))
+        self.moneySpentLbl.grid(row=0, column=3)
 
         # Left little menu frame
         self.leftSubMenuFrame = tk.Frame(self.root)
@@ -194,9 +200,13 @@ class TokenWindow:
         self.token = ""
         self.token_url = ""
 
+        webbrowser.open(self.AUTH_URL)
+
     def get_new_token(self, event):
         self.token_url = self.enter_url_field.get()
         self.token = self.token_url.split('#')[1].split('&')[0].split('=')[1]
+
+
 
 def check_token(token):
     api_sub_root = construct_vk_check_token(token)
@@ -206,6 +216,7 @@ def check_token(token):
     byte_data_about_token = response.read()
     json_data_about_token = byte_data_about_token.decode('utf-8')     # getting string from bytes
     parsed_data = json.loads(json_data_about_token)                    # parsing json
+    print(parsed_data)
     if 'error' in parsed_data:
         return False
     else:

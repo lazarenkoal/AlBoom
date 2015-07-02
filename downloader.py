@@ -5,13 +5,16 @@ import os
 from os import makedirs
 import urllib
 from mutagen.mp3 import EasyMP3 as MP3
+
+
+
 """
 Uploads song to the directory, which is made for album
 input: artists name, album, dictionary with links ({song-name : link})
 """
 def download_songs(artist, album, tracks, file_path, status_handler):
 
-    #Create folder
+    # Create folder
     folder_directory = file_path + '/' + artist['artistName'] + ' - ' + album['collectionName']
     if not os.path.exists(folder_directory):
         makedirs(folder_directory)

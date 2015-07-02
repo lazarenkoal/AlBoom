@@ -3,26 +3,29 @@ import threading
 from music_info_processing import *
 from downloader import *
 from PIL import Image, ImageTk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import io
+
 __author__ = 'aleksandrlazarenko'
 
 artists = []
 albums = []
 
+
 class MainWindowViewController:
-    def __init__(self, token):
-        self.token = token
+    def __init__(self, user_data):
         self.connection = http.client.HTTPConnection(APIRoot)
         self.artists_cache = []
         self.artist = ""
         self.album = ""
+        self.user_data = user_data
         self.songs_cache = []
         self.main_window = MainWindow(
             artist_selector=self.select_artist_in_the_second_thread,
             album_getter=self.start_getting_album_in_another_thread,
             download_starter=self.start_downloading_in_second_thread,
-            search_starter=self.start_searching_in_another_thread)
+            search_starter=self.start_searching_in_another_thread,
+            spent_money=self.user_data['data']['spent_money'])
 
         self.main_window.root.mainloop()
 
@@ -52,10 +55,9 @@ class MainWindowViewController:
             file_path = filedialog.askdirectory()
             songs_with_links = get_urls_of_tracks_for_downloading(self.artist,
                                                                   self.songs_cache,
-                                                                  self.token,
                                                                   self.main_window.display_status)
             download_songs(self.artist, self.album, songs_with_links, file_path,
-                         self.main_window.display_status)
+                           self.main_window.display_status)
         else:
             messagebox.showerror(title='Empty album',
                                  message='You are trying to download nothing.'
@@ -119,7 +121,7 @@ class MainWindowViewController:
                                           'Contents: {} - {}\n\n'.format(self.artist['artistName'],
                                                                          self.album['collectionName']))
         i = 1
-        self.songs_cache = [] # Clearing cache
+        self.songs_cache = []  # Clearing cache
         for song in songs[1:]:
             print(song)
             self.songs_cache.append(song)
