@@ -13,6 +13,10 @@ def get_saved_token():
     data = upload_program_data()
     return data['data']['token']
 
+def get_spent_money():
+    data = upload_program_data()
+    return data['data']['spent_money']
+
 def update_token(new_token):
     # If u ll open file with 'w', file content will be deleted
     file = open(DATA_PATH, 'r')
@@ -31,7 +35,7 @@ def update_spent_money(amount_of_money):
     file = open(DATA_PATH, 'w')
     data = xmltodict.parse(xml_data)
     data['data']['spent_money'] = \
-        int(data['data']['spent_money']) + amount_of_money
+        float(data['data']['spent_money']) + amount_of_money
     file.write(xmltodict.unparse(data))
     file.close()
 

@@ -5,7 +5,7 @@ from downloader import *
 from PIL import Image, ImageTk
 from tkinter import filedialog, messagebox
 import io
-
+from program_data_manager import update_spent_money, get_spent_money
 __author__ = 'aleksandrlazarenko'
 
 artists = []
@@ -20,6 +20,7 @@ class MainWindowViewController:
         self.album = ""
         self.user_data = user_data
         self.songs_cache = []
+        self.album_price = 0
         self.main_window = MainWindow(
             artist_selector=self.select_artist_in_the_second_thread,
             album_getter=self.start_getting_album_in_another_thread,
@@ -58,6 +59,8 @@ class MainWindowViewController:
                                                                   self.main_window.display_status)
             download_songs(self.artist, self.album, songs_with_links, file_path,
                            self.main_window.display_status)
+            update_spent_money(self.album_price)
+            self.main_window.moneySpentLbl['text'] ='Затарился на: {}$'.format(get_spent_money())
         else:
             messagebox.showerror(title='Empty album',
                                  message='You are trying to download nothing.'
@@ -88,7 +91,6 @@ class MainWindowViewController:
         self.artist = artists[int(chosen_artist_index)]
         global albums
         albums = find_albums(artists[int(chosen_artist_index)]['artistId'], self.connection)
-        print(albums)
         self.main_window.albumsListBox.delete(0, 'end')
         i = 0
         for album in albums[1:]:
@@ -99,6 +101,7 @@ class MainWindowViewController:
         chosen_album_index = int(self.main_window.albumsListBox.curselection()[0]) + 1
         self.album = albums[chosen_album_index]
         self.main_window.display_status('Collecting songs')
+        self.album_price = albums[chosen_album_index]['collectionPrice']
 
         album_id = albums[chosen_album_index]['collectionId']
         songs = get_tracks_from_album(album_id, self.connection, self.main_window.display_status)
@@ -112,7 +115,7 @@ class MainWindowViewController:
 
         self.main_window.albumInfo.configure(state='normal')
         self.main_window.albumInfo.delete(1.0, 'end')
-        self.main_window.albumInfo.insert(1.0, 'nothing to say')
+        self.main_window.albumInfo.insert(1.0, 'Цена вопроса: {}$'.format(self.album_price))
         self.main_window.albumInfo.configure(state='disabled')
 
         self.main_window.songsList.configure(state='normal')

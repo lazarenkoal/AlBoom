@@ -1,5 +1,5 @@
 from main_controller import MainWindowViewController
-import program_saver
+import program_data_manager
 __author__ = 'aleksandrlazarenko'
 
 
@@ -7,7 +7,7 @@ __author__ = 'aleksandrlazarenko'
 """
 def main():
     # TODO: upload data from previous users visit (token, etc)
-    userData = program_saver.upload_program_data()
+    userData = program_data_manager.upload_program_data()
     MainWindowViewController(userData)
 
 main()

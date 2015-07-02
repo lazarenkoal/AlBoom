@@ -119,7 +119,7 @@ class MainWindow:
         self.rightFrame.grid_rowconfigure(0, weight=1)
 
         # Preparing start image
-        self.logo_image_bytes = Image.open("logo.jpg")
+        self.logo_image_bytes = Image.open("AlBoomLogo.jpg")
         self.photo_logo = ImageTk.PhotoImage(self.logo_image_bytes)
 
         # Setting starting image

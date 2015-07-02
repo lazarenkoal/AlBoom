@@ -11,7 +11,7 @@ import time
 import re
 import json
 import main_view
-from program_saver import update_token, get_saved_token
+from program_data_manager import update_token, get_saved_token
 
 # General root for requests
 APIRoot = 'itunes.apple.com'  # ITunes API root path
@@ -110,8 +110,9 @@ def get_urls_of_tracks_for_downloading(author, tracks, handler):
 
     token = get_saved_token()
 
-    if token == None:
+    if token is None:
         update_token(main_view.get_token())
+        token = get_saved_token()
 
     for track, i in zip(tracks, range(0, len(tracks), 1)):  # go foreach song in album
         handler('getting links', progress)
