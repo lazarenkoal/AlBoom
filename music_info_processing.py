@@ -110,7 +110,7 @@ def get_urls_of_tracks_for_downloading(author, tracks, handler):
 
     token = get_saved_token()
 
-    if token == "":
+    if token == None:
         update_token(main_view.get_token())
 
     for track, i in zip(tracks, range(0, len(tracks), 1)):  # go foreach song in album

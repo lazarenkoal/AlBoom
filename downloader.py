@@ -27,7 +27,11 @@ def download_songs(artist, album, tracks, file_path, status_handler):
     for track in tracks:
         status_handler('Downloading track: ' + track['trackName'], progress)
 
-        song_name = folder_directory + '/' + track['trackName'] + '.mp3'
+        track_name = track['trackName']
+        if '/' in track_name:
+            track_name = track_name.replace('/', '')
+
+        song_name = folder_directory + '/' + track_name + '.mp3'
 
         # Download track
         urllib.request.urlretrieve(track['trackUrl'], song_name)
