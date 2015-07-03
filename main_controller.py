@@ -60,7 +60,7 @@ class MainWindowViewController:
             download_songs(self.artist, self.album, songs_with_links, file_path,
                            self.main_window.display_status)
             update_spent_money(self.album_price)
-            self.main_window.moneySpentLbl['text'] ='Затарился на: {}$'.format(get_spent_money())
+            self.main_window.moneySpentLbl['text'] ='Затарился на: {:.2f}$'.format(float(get_spent_money()))
         else:
             messagebox.showerror(title='Empty album',
                                  message='You are trying to download nothing.'

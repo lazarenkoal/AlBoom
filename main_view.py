@@ -63,7 +63,7 @@ class MainWindow:
         self.searchBtn.grid(row=0, column=2)
 
         # Amount of money display
-        self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {}$'.format(spent_money))
+        self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {:.2f}$'.format(float(spent_money)))
         self.moneySpentLbl.grid(row=0, column=3)
 
         # Left little menu frame

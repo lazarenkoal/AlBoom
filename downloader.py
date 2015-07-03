@@ -15,6 +15,9 @@ input: artists name, album, dictionary with links ({song-name : link})
 def download_songs(artist, album, tracks, file_path, status_handler):
 
     # Create folder
+    if '/' in artist['artistName']:
+        artist['artistName'] = artist['artistName'].replace('/', '\\')
+
     folder_directory = file_path + '/' + artist['artistName'] + ' - ' + album['collectionName']
     if not os.path.exists(folder_directory):
         makedirs(folder_directory)
