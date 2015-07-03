@@ -18,6 +18,8 @@ __author__ = 'aleksandrlazarenko'
 class MainWindow:
     def __init__(self, search_starter, artist_selector, album_getter, download_starter, spent_money):
 
+        self.background_color = 'white'
+
         self.WELCOME_TEXT = ('Добро пожаловать в AlBoom! Это программа для загрузки'
                              'альбомов твоих любимых исполнителей через Вконтакте.'
                              'Просто введи имя исполнителя и выбери альбом.'
@@ -38,6 +40,7 @@ class MainWindow:
         self.root.geometry('1081x700')
         self.root.title('AlBoom')
         self.root.resizable(False, False)
+        self.root.configure(background=self.background_color)
 
         # Creating pop-up
         self.captcha_window = None
@@ -45,14 +48,17 @@ class MainWindow:
         # The highest, first frame for search and progress bar
         self.upperMenuFrame = tk.Frame(self.root)
         self.upperMenuFrame.grid(row=0, columnspan=2)
+        self.upperMenuFrame.configure(background=self.background_color)
 
         # Frame in the highest for storing content
         self.upperMenuItemsFrame = tk.Frame(master=self.upperMenuFrame)
         self.upperMenuItemsFrame.grid(row=0, column=0, sticky='W')
+        self.upperMenuFrame.configure(background=self.background_color)
 
         # Label for search field
         self.searchLabel = tk.Label(master=self.upperMenuItemsFrame, text='Имя артиста:')
         self.searchLabel.grid(row=0, column=0, sticky='w')
+        self.searchLabel.configure(background=self.background_color)
 
         # Search field
         self.searchEnter = tk.Entry(self.upperMenuItemsFrame, width=25)
@@ -61,18 +67,22 @@ class MainWindow:
         # Search button
         self.searchBtn = tk.Button(self.upperMenuItemsFrame, text='Найти')
         self.searchBtn.grid(row=0, column=2)
+        self.searchBtn.configure(background=self.background_color)
 
         # Amount of money display
         self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {:.2f}$'.format(float(spent_money)))
         self.moneySpentLbl.grid(row=0, column=3)
+        self.moneySpentLbl.configure(background=self.background_color)
 
         # Left little menu frame
         self.leftSubMenuFrame = tk.Frame(self.root)
         self.leftSubMenuFrame.grid(row=1, column=0)
+        self.leftSubMenuFrame.configure(background=self.background_color)
 
         # Label for progress status
         self.progressStatusLabel = tk.Label(self.leftSubMenuFrame, text='Готов искать')
         self.progressStatusLabel.grid(row=0, column=0, sticky='E')
+        self.progressStatusLabel.configure(background=self.background_color)
 
         # Progress bar
         self.progressBar = tk.ttk.Progressbar(self.leftSubMenuFrame, orient="horizontal", length=300,
@@ -108,10 +118,12 @@ class MainWindow:
         # Right little menu frame
         self.rightSubMenuFrame = tk.Frame(self.root)
         self.rightSubMenuFrame.grid(row=1, column=1)
+        self.rightSubMenuFrame.configure(background=self.background_color)
 
         # Button for uploading album
         self.downloadAlbumBtn = tk.Button(self.rightSubMenuFrame, text='Скачать альбом')
         self.downloadAlbumBtn.grid(row=0, column=0)
+        self.downloadAlbumBtn.configure(background=self.background_color)
 
         # Main right frame
         self.rightFrame = tk.LabelFrame(self.root, padx=5, pady=9, bd=2, relief='ridge')
