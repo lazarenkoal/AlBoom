@@ -1,0 +1,43 @@
+{'topalbums':
+{
+  '@attr':
+  {'total': '8', 'artist': 'Каста', 'totalPages': '1', 'page': '1', 'perPage': '50'},
+  'album':
+  {
+    'name': 'Трехмерные рифмы', 'playcount': '739', 'artist': {'name': 'Каста', 'mbid': 'a3c5385a-9727-40c8-8152-fb3d98181fff', 'url': 'http://www.last.fm/music/%D0%9A%D0%B0%D1%81%D1%82%D0%B0'}, 'image': [{'#text': 'http://userserve-ak.last.fm/serve/34s/91150853.png', 'size': 'small'}, {'#text': 'http://userserve-ak.last.fm/serve/64s/91150853.png', 'size': 'medium'}, {'#text': 'http://userserve-ak.last.fm/serve/126/91150853.png', 'size': 'large'}, {'#text': 'http://userserve-ak.last.fm/serve/300x300/91150853.png', 'size': 'extralarge'}], '@attr': {'rank': '1'}, 'mbid': '5b9bdfd3-a844-4c2d-a700-de04245204c0', 'url': 'http://www.last.fm/music/%D0%9A%D0%B0%D1%81%D1%82%D0%B0/%D0%A2%D1%80%D0%B5%D1%85%D0%BC%D0%B5%D1%80%D0%BD%D1%8B%D0%B5+%D1%80%D0%B8%D1%84%D0%BC%D1%8B'}}}
+[
+{
+'trackViewUrl': 'https://itunes.apple.com/us/album/bad-guy/id731756766?i=731756767&uo=4',
+'currency': 'USD',
+'trackExplicitness': 'explicit',
+'trackTimeMillis': 434077,
+'collectionExplicitness': 'explicit',
+'contentAdvisoryRating': 'Explicit',
+'collectionName': 'The Marshall Mathers LP2 (Deluxe)',
+'country': 'USA',
+'trackName': 'Bad Guy',
+'isStreamable': True,
+'artistViewUrl': 'https://itunes.apple.com/us/artist/eminem/id111051?uo=4',
+'collectionViewUrl': 'https://itunes.apple.com/us/album/bad-guy/id731756766?i=731756767&uo=4',
+'trackId': 731756767,
+'trackCount': 21,
+'artistName': 'Eminem',
+'kind': 'song',
+'collectionPrice': 15.99,
+'artistId': 111051,
+'trackPrice': 1.29,
+'artworkUrl30': 'http://is3.mzstatic.com/image/pf/us/r30/Music4/v4/b7/90/4e/b7904ea4-9db7-268e-5544-bc24d1af0f2c/UMG_cvrart_00602537542703_01_RGB72_1500x1500_13UAEIM06078.30x30-50.jpg',
+'previewUrl': 'http://a697.phobos.apple.com/us/r1000/038/Music/v4/8e/43/42/8e4342cb-9818-39ea-0895-91b047efb753/mzaf_8179097426922751432.plus.aac.p.m4a',
+'discCount': 1,
+'primaryGenreName': 'Hip-Hop/Rap',
+'wrapperType': 'track',
+'trackCensoredName': 'Bad Guy',
+'artworkUrl60': 'http://is2.mzstatic.com/image/pf/us/r30/Music4/v4/b7/90/4e/b7904ea4-9db7-268e-5544-bc24d1af0f2c/UMG_cvrart_00602537542703_01_RGB72_1500x1500_13UAEIM06078.60x60-50.jpg',
+'collectionId': 731756766,
+'releaseDate': '2013-11-05T08:00:00Z',
+'discNumber': 1,
+'trackUrl': 'http://cs536222.vk.me/u162882102/audios/018a99ea47e7.mp3?extra=siXmWjkDgMltSJ0D0tvzoM7ngL2b7qTGfL8R5QB9Km4I0fEatOXyWmx-5gTqxNht2Rfu9ab9V3YVwVzYIrjPEfrshVLo-ZpCZA',
+'artworkUrl100': 'http://is2.mzstatic.com/image/pf/us/r30/Music4/v4/b7/90/4e/b7904ea4-9db7-268e-5544-bc24d1af0f2c/UMG_cvrart_00602537542703_01_RGB72_1500x1500_13UAEIM06078.100x100-75.jpg',
+'trackNumber': 1,
+'collectionCensoredName': 'The Marshall Mathers LP2 (Deluxe)',
+'radioStationUrl': 'https://itunes.apple.com/station/idra.731756767'}

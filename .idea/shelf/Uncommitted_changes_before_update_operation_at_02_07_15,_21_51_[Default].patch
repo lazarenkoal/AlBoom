@@ -1,0 +1,426 @@
+Index: program_data.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- program_data.xml	(revision )
++++ program_data.xml	(revision )
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<data><spent_money>0</spent_money><token>6a370d9569bcd8022c2e33ffecd9e1706a97a64192ec1433e7f6f1e62c7b2513e74e510fa3596508ccfe1</token></data>
+\ No newline at end of file
+Index: .idea/MusicScooper.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/MusicScooper.iml	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ .idea/MusicScooper.iml	(revision )
+@@ -2,7 +2,7 @@
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+     <content url="file://$MODULE_DIR$" />
+-    <orderEntry type="jdk" jdkName="Python 3.4.3 (/Library/Frameworks/Python.framework/Versions/3.4/bin/python3.4)" jdkType="Python SDK" />
++    <orderEntry type="jdk" jdkName="Python 3.4.1 (/Library/Frameworks/Python.framework/Versions/3.4/bin/python3.4)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ .idea/misc.xml	(revision )
+@@ -10,5 +10,5 @@
+     <ConfirmationsSetting value="0" id="Add" />
+     <ConfirmationsSetting value="0" id="Remove" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.4.3 (/Library/Frameworks/Python.framework/Versions/3.4/bin/python3.4)" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.4.1 (/Library/Frameworks/Python.framework/Versions/3.4/bin/python3.4)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: main_view.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main_view.py	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ main_view.py	(revision )
+@@ -7,6 +7,8 @@
+ import json
+ from music_info_processing import VKApiRoot
+ import time
++import webbrowser
++
+ __author__ = 'aleksandrlazarenko'
+ 
+ """Main MusicScooper Window
+@@ -14,7 +16,7 @@
+ 
+ 
+ class MainWindow:
+-    def __init__(self, search_starter, artist_selector, album_getter, download_starter):
++    def __init__(self, search_starter, artist_selector, album_getter, download_starter, spent_money):
+ 
+         self.WELCOME_TEXT = ('Welcome to Music Scooper! Absolutely free tool'
+                              ' for downloading music by albums from VK social network.'
+@@ -57,6 +59,10 @@
+         self.searchBtn = tk.Button(self.upperMenuItemsFrame, text='Найти')
+         self.searchBtn.grid(row=0, column=2)
+ 
++        # Amount of money display
++        self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {}$'.format(spent_money))
++        self.moneySpentLbl.grid(row=0, column=3)
++
+         # Left little menu frame
+         self.leftSubMenuFrame = tk.Frame(self.root)
+         self.leftSubMenuFrame.grid(row=1, column=0)
+@@ -175,7 +181,7 @@
+ 
+         self.token_instruction = tk.Text(self.token_window)
+         self.token_instruction.insert(1.0, 'Hello, dear user! We need your permission for using VK\n')
+-        self.token_instruction.insert(2.0, 'You have to follow this link:\n{}\n'.format(self.AUTH_URL))
++        self.token_instruction.insert(2.0, 'You have to follow this link (opens automatically):\n{}\n'.format(self.AUTH_URL))
+         self.token_instruction.insert(3.0, 'After giving your permission you will be redirected\n')
+         self.token_instruction.insert(4.0, 'Just paste final url and click on submit btn!\n')
+         self.token_instruction.pack()
+@@ -191,6 +197,8 @@
+         self.token = ""
+         self.token_url = ""
+ 
++        webbrowser.open(self.AUTH_URL)
++
+     def get_new_token(self, event):
+         self.token_url = self.enter_url_field.get()
+         self.token = self.token_url.split('#')[1].split('&')[0].split('=')[1]
+@@ -238,7 +246,7 @@
+         self.submit_btn.pack()
+ 
+         self.captcha_display = tk.Label(self.captcha_window)
+-        captcha_img = mcController.MainWindowViewController.get_image(captcha_url)
++        captcha_img = main_controller.MainWindowViewController.get_image(captcha_url)
+         self.captcha_display.configure(image=captcha_img)
+         self.captcha_display.image = captcha_img
+         self.captcha_display.pack()
+Index: main_controller.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main_controller.py	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ main_controller.py	(revision )
+@@ -5,13 +5,14 @@
+ from PIL import Image, ImageTk
+ from tkinter import filedialog
+ import io
++from tkinter import messagebox
+ __author__ = 'aleksandrlazarenko'
+ 
+ artists = []
+ albums = []
+ 
+ class MainWindowViewController:
+-    def __init__(self, token):
++    def __init__(self, token, spent_money):
+         self.token = token
+         self.connection = http.client.HTTPConnection(APIRoot)
+         self.artists_cache = []
+@@ -22,7 +23,8 @@
+             artist_selector=self.select_artist_in_the_second_thread,
+             album_getter=self.start_getting_album_in_another_thread,
+             download_starter=self.start_downloading_in_second_thread,
+-            search_starter=self.start_searching_in_another_thread)
++            search_starter=self.start_searching_in_another_thread,
++            spent_money=spent_money)
+ 
+         self.main_window.root.mainloop()
+ 
+@@ -52,7 +54,6 @@
+             file_path = filedialog.askdirectory()
+             songs_with_links = get_urls_of_tracks_for_downloading(self.artist,
+                                                                   self.songs_cache,
+-                                                                  self.token,
+                                                                   self.main_window.display_status)
+             download_songs(self.artist, self.album, songs_with_links, file_path,
+                          self.main_window.display_status)
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main.py	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ main.py	(revision )
+@@ -1,20 +1,17 @@
+ import main_controller
+-from music_info_processing import VKApiRoot
+-from request_constructor import construct_vk_check_token
+-import http.client
+-import json
+-from main_view import TokenWindow
++import program_saver
+ __author__ = 'aleksandrlazarenko'
+ 
+ 
+ """Main-main-main ultra-main!!!!!
+ """
++userData = None
+ def main():
+     # TODO: upload data from previous users visit (token, etc)
+-    token = '0fb6a091be154e1330af856bf3e97a772993d76e5cb3e988a3971451a5e7cbe57b025138536cca63cf1ac'
+-    controller = main_controller.MainWindowViewController(token)
+-
+-
+-
++    global userData
++    userData = program_saver.upload_program_data()
++    token = userData['data']['token']
++    spent_money = userData['data']['spent_money']
++    controller = main_controller.MainWindowViewController(token, spent_money)
+ 
+ main()
+\ No newline at end of file
+Index: downloader.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- downloader.py	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ downloader.py	(revision )
+@@ -5,13 +5,16 @@
+ from os import makedirs
+ import urllib
+ from mutagen.mp3 import EasyMP3 as MP3
++
++
++
+ """
+ Uploads song to the directory, which is made for album
+ input: artists name, album, dictionary with links ({song-name : link})
+ """
+ def download_songs(artist, album, tracks, file_path, status_handler):
+ 
+-    #Create folder
++    # Create folder
+     folder_directory = file_path + '/' + artist['artistName'] + ' - ' + album['collectionName']
+     if not os.path.exists(folder_directory):
+         makedirs(folder_directory)
+Index: program_saver.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- program_saver.py	(revision )
++++ program_saver.py	(revision )
+@@ -0,0 +1,36 @@
++import xmltodict
++
++DATA_PATH = 'program_data.xml'
++
++def upload_program_data():
++    file = open(DATA_PATH, 'r')
++    xml_data = file.read()
++    file.close()
++    data = xmltodict.parse(xml_data)
++    return data
++
++def update_token(new_token):
++    # If u ll open file with 'w', file content will be deleted
++    file = open(DATA_PATH, 'r')
++    xml_data = file.read()
++    file.close()
++    file = open(DATA_PATH, 'w')
++    data = xmltodict.parse(xml_data)
++    data['data']['token'] = new_token
++    file.write(xmltodict.unparse(data))
++    file.close()
++
++def update_spent_money(amount_of_money):
++    file = open(DATA_PATH, 'r')
++    xml_data = file.read()
++    file.close()
++    file = open(DATA_PATH, 'w')
++    data = xmltodict.parse(xml_data)
++    data['data']['spent_money'] = \
++        int(data['data']['spent_money']) + amount_of_money
++    file.write(xmltodict.unparse(data))
++    file.close()
++
++
++
++
+Index: music_info_processing.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- music_info_processing.py	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ music_info_processing.py	(revision )
+@@ -11,10 +11,14 @@
+ import re
+ import json
+ import main_view
++from program_saver import update_token
++from main import userData
++
+ # General root for requests
+-APIRoot = 'itunes.apple.com'        # ITunes API root path
++APIRoot = 'itunes.apple.com'  # ITunes API root path
+-VKApiRoot = 'api.vk.com'            # VK API root path
++VKApiRoot = 'api.vk.com'  # VK API root path
+ 
++
+ # To establish connection connection = http.client.HTTPConnection(APIRoot)
+ 
+ 
+@@ -24,15 +28,17 @@
+ input: name of the artist
+ output: all found artists
+ """
++
++
+ def find_artists(artist_name, connection):
+-    api_sub_root = construct_find_artist_req_str(artist_name)           # getting sub root
++    api_sub_root = construct_find_artist_req_str(artist_name)  # getting sub root
+-    connection.request('GET', api_sub_root)                             # making request
++    connection.request('GET', api_sub_root)  # making request
+-    response = connection.getresponse()                                 # getting response
++    response = connection.getresponse()  # getting response
+-    byte_data_about_artist = response.read()                            # reading response
++    byte_data_about_artist = response.read()  # reading response
+-    json_data_about_artist = byte_data_about_artist.decode('utf-8')     # getting string from bytes
++    json_data_about_artist = byte_data_about_artist.decode('utf-8')  # getting string from bytes
+-    parsed_data = json.loads(json_data_about_artist)                    # parsing json
++    parsed_data = json.loads(json_data_about_artist)  # parsing json
+-    artists = parsed_data['results']                                    # getting list of artists
++    artists = parsed_data['results']  # getting list of artists
+-    return artists                                                      # sending to caller
++    return artists  # sending to caller
+ 
+ 
+ """
+@@ -42,18 +48,20 @@
+ input: name of artist
+ output: related albums
+ """
+-def find_albums(artist_id, connection):
+ 
++
++def find_albums(artist_id, connection):
+-    api_sub_root = construct_find_albums_req_string(artist_id)          # getting sub root
++    api_sub_root = construct_find_albums_req_string(artist_id)  # getting sub root
+-    connection.request('GET', api_sub_root)                             # making request
++    connection.request('GET', api_sub_root)  # making request
+-    response = connection.getresponse()                                 # getting response
++    response = connection.getresponse()  # getting response
+-    byte_data_about_albums = response.read()                            # reading response
++    byte_data_about_albums = response.read()  # reading response
+-    json_data_about_albums = byte_data_about_albums.decode('utf-8')     # getting string from bytes
++    json_data_about_albums = byte_data_about_albums.decode('utf-8')  # getting string from bytes
+-    parsed_data = json.loads(json_data_about_albums)                    # parsing json
++    parsed_data = json.loads(json_data_about_albums)  # parsing json
+     print(parsed_data)
+-    albums = parsed_data['results']                                     # getting list of albums
++    albums = parsed_data['results']  # getting list of albums
+-    return albums                                               # sending to caller
++    return albums  # sending to caller
+ 
++
+ """
+ Function finds all tracks in album
+ API method: album.getInfo
+@@ -61,27 +69,33 @@
+ input: name of album
+ output: list of tracks
+ """
+-def get_tracks_from_album(album_id, connection, status_handler):
+ 
++
++def get_tracks_from_album(album_id, connection, status_handler):
+-    api_sub_root = construct_get_album_tracks_req_string(album_id)                      # getting sub root
++    api_sub_root = construct_get_album_tracks_req_string(album_id)  # getting sub root
+-    connection.request('GET', api_sub_root)                                             # making request
++    connection.request('GET', api_sub_root)  # making request
+-    response = connection.getresponse()                                                 # getting response
++    response = connection.getresponse()  # getting response
+-    byte_data_about_tracks = response.read()                                            # reading response
++    byte_data_about_tracks = response.read()  # reading response
+-    json_data_about_tracks = byte_data_about_tracks.decode('utf-8')                     # getting string from bytes
++    json_data_about_tracks = byte_data_about_tracks.decode('utf-8')  # getting string from bytes
+-    parsed_data = json.loads(json_data_about_tracks)                                    # parsing json
++    parsed_data = json.loads(json_data_about_tracks)  # parsing json
+-    songs = parsed_data['results'] 
++    songs = parsed_data['results']
+     return songs
+ 
++
+ connection = 'connection'
++
++
+ def try_get_parsed_tracks(request_string):
+     global connection
+     connection = http.client.HTTPSConnection(VKApiRoot)
+-    connection.request('GET', request_string)                                         # making request
++    connection.request('GET', request_string)  # making request
+-    response = connection.getresponse()                                               # getting response
++    response = connection.getresponse()  # getting response
+-    byte_tracks = response.read()                                                     # reading bytes from response
++    byte_tracks = response.read()  # reading bytes from response
+-    json_tracks = byte_tracks.decode('utf-8')                                         # decoding
++    json_tracks = byte_tracks.decode('utf-8')  # decoding
+     parsed_tracks = json.loads(json_tracks)
+     return parsed_tracks
++
++
+ """
+ Gets urls of tracks from VK
+ API method: audio.search
+@@ -89,7 +103,12 @@
+ input author, listOfNames, token
+ output: list of urls for uploading
+ """
+-def get_urls_of_tracks_for_downloading(author, tracks, token, handler):
++
++
++def get_urls_of_tracks_for_downloading(author, tracks, handler):
++
++    token = userData['data']['token']
++
+     progress = 0
+     max_progress = len(tracks)
+     tick = int((1 / max_progress) * 100)
+@@ -97,8 +116,9 @@
+     if token == "" or not main_view.check_token(token):
+         # TODO: make token saver, when there will be saver
+         token = main_view.get_token()
++        update_token(token)
+ 
+-    for track, i in zip(tracks, range(0, len(tracks), 1)):                           # go foreach song in album
++    for track, i in zip(tracks, range(0, len(tracks), 1)):  # go foreach song in album
+         handler('getting links', progress)
+         progress += tick
+         track_name = track['trackName']
+@@ -126,5 +146,5 @@
+                 tracks[i]['trackUrl'] = parsed_tracks['response'][1]['url']
+                 break
+ 
+-    connection.close()                                                                # closing connection
++    connection.close()  # closing connection
+     return tracks
+Index: .idea/dictionaries/aleksandrlazarenko.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/dictionaries/aleksandrlazarenko.xml	(revision 8409669b026b19a22d2aa625ff66cd6a4dcbac4b)
++++ .idea/dictionaries/aleksandrlazarenko.xml	(revision )
+@@ -5,6 +5,7 @@
+       <w>audioscrobbler</w>
+       <w>chromedriver</w>
+       <w>gettopalbums</w>
++      <w>itunes</w>
+       <w>tracknumber</w>
+       <w>webdriver</w>
+     </words>
+\ No newline at end of file

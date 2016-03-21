@@ -52,7 +52,7 @@ class MainWindowViewController:
 
     def download_album(self):
         try:
-            # opening fucking dialog
+                # opening fucking dialog
             if self.artist != '' and self.album != '' and self.songs_cache.__len__() > 0:
                 file_path = filedialog.askdirectory()
                 songs_with_links = get_urls_of_tracks_for_downloading(self.artist,
@@ -73,7 +73,7 @@ class MainWindowViewController:
                                  message='Извините, но что-то пошло не так... '
                                          'Пожалуйста, перезапустите программу и'
                                          'попробуйте еще раз')
-
+#
     def search_artist(self):
         try:
             search_string = self.main_window.searchEnter.get()

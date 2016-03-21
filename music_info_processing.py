@@ -17,7 +17,6 @@ from program_data_manager import update_token, get_saved_token
 APIRoot = 'itunes.apple.com'  # ITunes API root path
 VKApiRoot = 'api.vk.com'  # VK API root path
 
-
 """
 Function finds information about artists
 API method: artist.search
@@ -77,11 +76,12 @@ def get_tracks_from_album(album_id, connection, status_handler):
     songs = parsed_data['results']
     return songs
 
+
+connection = 'connection'
+
 connection = 'connection'
 
 
-
-connection = 'connection'
 def try_get_parsed_tracks(request_string):
     global connection
     connection = http.client.HTTPSConnection(VKApiRoot)
@@ -103,7 +103,6 @@ output: list of urls for uploading
 
 
 def get_urls_of_tracks_for_downloading(author, tracks, handler):
-
     progress = 0
     max_progress = len(tracks)
     tick = int((1 / max_progress) * 100)
@@ -122,25 +121,29 @@ def get_urls_of_tracks_for_downloading(author, tracks, handler):
         request_string = construct_vk_search_string(artist_name, track_name, token)  # constructing request
 
         while True:
-            parsed_tracks = try_get_parsed_tracks(request_string)
-            time.sleep(0.35)
-            print(parsed_tracks)
-            if 'error' in parsed_tracks and parsed_tracks['error'] != [0]:
-                captcha_sid = parsed_tracks['error']['captcha_sid']
-                captcha_img = parsed_tracks['error']['captcha_img']
-                captcha_key = main_view.MainWindow.get_captcha_key(captcha_img)
-                request_string = construct_vk_search_string_with_captcha(artist_name, track_name, token,
-                                                                         captcha_sid, captcha_key)
-                continue
-            if parsed_tracks['response'] == [0]:
-                old_track_name = track_name
-                track_name = re.sub(r'\([^)]*\)', '', old_track_name).strip()
-                if old_track_name == track_name:
+            try:
+                parsed_tracks = try_get_parsed_tracks(request_string)
+                time.sleep(0.35)
+                print(parsed_tracks)
+                if 'error' in parsed_tracks and parsed_tracks['error'] != [0]:
+                    captcha_sid = parsed_tracks['error']['captcha_sid']
+                    captcha_img = parsed_tracks['error']['captcha_img']
+                    captcha_key = main_view.MainWindow.get_captcha_key(captcha_img)
+                    request_string = construct_vk_search_string_with_captcha(artist_name, track_name, token,
+                                                                             captcha_sid, captcha_key)
+                    continue
+                if parsed_tracks['response'] == [0]:
+                    old_track_name = track_name
+                    track_name = re.sub(r'\([^)]*\)', '', old_track_name).strip()
+                    if old_track_name == track_name:
+                        break
+                    request_string = construct_vk_search_string(artist_name, track_name, token)
+                if parsed_tracks['response'] != [0]:
+                    tracks[i]['trackUrl'] = parsed_tracks['response'][1]['url']
                     break
-                request_string = construct_vk_search_string(artist_name, track_name, token)
-            if parsed_tracks['response'] != [0]:
-                tracks[i]['trackUrl'] = parsed_tracks['response'][1]['url']
+            except IndexError:
                 break
+
 
     connection.close()  # closing connection
     return tracks

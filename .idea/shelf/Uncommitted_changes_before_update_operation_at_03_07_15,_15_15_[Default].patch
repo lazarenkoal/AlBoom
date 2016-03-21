@@ -1,0 +1,62 @@
+Index: main_view.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main_view.py	(revision 913a80746ac79a16015d35f27129b98a10edd82e)
++++ main_view.py	(revision )
+@@ -63,7 +63,7 @@
+         self.searchBtn.grid(row=0, column=2)
+ 
+         # Amount of money display
+-        self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {}$'.format(spent_money))
++        self.moneySpentLbl = tk.Label(self.upperMenuItemsFrame, text='Затарился на: {:.2f}$'.format(float(spent_money)))
+         self.moneySpentLbl.grid(row=0, column=3)
+ 
+         # Left little menu frame
+Index: main_controller.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main_controller.py	(revision 913a80746ac79a16015d35f27129b98a10edd82e)
++++ main_controller.py	(revision )
+@@ -60,7 +60,7 @@
+             download_songs(self.artist, self.album, songs_with_links, file_path,
+                            self.main_window.display_status)
+             update_spent_money(self.album_price)
+-            self.main_window.moneySpentLbl['text'] ='Затарился на: {}$'.format(get_spent_money())
++            self.main_window.moneySpentLbl['text'] ='Затарился на: {:.2f}$'.format(float(get_spent_money()))
+         else:
+             messagebox.showerror(title='Empty album',
+                                  message='You are trying to download nothing.'
+Index: downloader.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- downloader.py	(revision 913a80746ac79a16015d35f27129b98a10edd82e)
++++ downloader.py	(revision )
+@@ -15,6 +15,9 @@
+ def download_songs(artist, album, tracks, file_path, status_handler):
+ 
+     # Create folder
++    if '/' in artist['artistName']:
++        artist['artistName'] = artist['artistName'].replace('/', '\\')
++
+     folder_directory = file_path + '/' + artist['artistName'] + ' - ' + album['collectionName']
+     if not os.path.exists(folder_directory):
+         makedirs(folder_directory)
+Index: program_data.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- program_data.xml	(revision 913a80746ac79a16015d35f27129b98a10edd82e)
++++ program_data.xml	(revision )
+@@ -1,2 +1,2 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<data><spent_money>65.94</spent_money><token>ff7d03aee070f5c4715fe3ed4cf559b6f51505c13a9fbabb7f27043bd114dc17ea1ec5173ffdae72ba476</token></data>
+\ No newline at end of file
++<data><spent_money>105.89999999999998</spent_money><token>ff7d03aee070f5c4715fe3ed4cf559b6f51505c13a9fbabb7f27043bd114dc17ea1ec5173ffdae72ba476</token></data>
+\ No newline at end of file
